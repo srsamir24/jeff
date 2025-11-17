@@ -1,8 +1,6 @@
 <template>
-  <component
-    :is="to ? 'NuxtLink' : 'button'"
-    :to="to"
-    :type="!to ? type : undefined"
+  <button
+    :type="type"
     :disabled="disabled || loading"
     :class="buttonClasses"
     @click="handleClick"
@@ -32,7 +30,7 @@
     <span v-if="$slots.iconRight && !loading" class="flex-shrink-0">
       <slot name="iconRight" />
     </span>
-  </component>
+  </button>
 </template>
 
 <script setup>
@@ -46,10 +44,6 @@ const props = defineProps({
     type: String,
     default: 'md', // sm, md, lg, xl
     validator: (value) => ['sm', 'md', 'lg', 'xl'].includes(value)
-  },
-  to: {
-    type: [String, Object],
-    default: null
   },
   type: {
     type: String,

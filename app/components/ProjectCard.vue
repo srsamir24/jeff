@@ -1,5 +1,5 @@
 <template>
-  <div class="group cursor-pointer">
+  <NuxtLink :to="`/work/${projectId}`" class="group cursor-pointer block">
     <div :class="[
       'relative overflow-hidden rounded-3xl shadow-lg aspect-4/3 transition-all duration-500',
       'group-hover:shadow-2xl group-hover:scale-105',
@@ -16,7 +16,7 @@
       <!-- Hover Overlay -->
       <div class="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/20 transition-all duration-300 flex items-center justify-center">
         <div class="transform scale-0 group-hover:scale-100 transition-transform duration-300">
-          <div class="bg-portfolio-white/95 backdrop-blur-sm rounded-2xl px-6 py-4">
+          <div class="bg-portfolio-white/95 backdrop-blur-sm rounded-2xl px-6 py-4 shadow-xl">
             <p class="text-blue-purple font-semibold">View Project</p>
           </div>
         </div>
@@ -41,11 +41,15 @@
         </span>
       </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup>
 defineProps({
+  projectId: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true

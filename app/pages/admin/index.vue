@@ -50,7 +50,7 @@
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
       <!-- Quick Actions -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Projects Card -->
         <NuxtLink to="/admin/projects" class="group bg-portfolio-white rounded-2xl p-8 shadow-md border border-gray-100 hover:shadow-xl hover:border-blue-purple/20 transition-all">
           <div class="flex items-center justify-between mb-6">
@@ -66,6 +66,40 @@
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-purple transition-colors">Manage Projects</h3>
           <p class="text-sm text-gray-500">Add, edit, or remove portfolio projects</p>
+        </NuxtLink>
+
+        <!-- Featured Projects Card -->
+        <NuxtLink to="/admin/featured-projects" class="group bg-portfolio-white rounded-2xl p-8 shadow-md border border-gray-100 hover:shadow-xl hover:border-light-green/20 transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-16 h-16 bg-linear-to-br from-light-green to-light-green/70 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-8 h-8 text-portfolio-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-light-green group-hover:text-blue-purple transition-colors">{{ stats.featured || 0 }}</div>
+              <div class="text-xs text-gray-500 mt-1">Featured</div>
+            </div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-light-green transition-colors">Featured Projects</h3>
+          <p class="text-sm text-gray-500">Select homepage featured projects</p>
+        </NuxtLink>
+
+        <!-- About Page Card -->
+        <NuxtLink to="/admin/about" class="group bg-portfolio-white rounded-2xl p-8 shadow-md border border-gray-100 hover:shadow-xl hover:border-light-blue/20 transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-16 h-16 bg-linear-to-br from-light-blue to-light-blue/70 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-8 h-8 text-portfolio-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-light-blue group-hover:text-bright-pink transition-colors">4</div>
+              <div class="text-xs text-gray-500 mt-1">Sections</div>
+            </div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-light-blue transition-colors">About Page</h3>
+          <p class="text-sm text-gray-500">Edit about page content & timeline</p>
         </NuxtLink>
 
         <!-- Content Management Card -->
@@ -101,7 +135,8 @@ const loggingOut = ref(false)
 
 // Stats
 const stats = ref({
-  projects: 0
+  projects: 0,
+  featured: 0
 })
 
 // Fetch real stats
@@ -111,7 +146,14 @@ const fetchStats = async () => {
     .from('projects')
     .select('*', { count: 'exact', head: true })
 
+  // Get featured project count
+  const { count: featuredCount } = await supabase
+    .from('projects')
+    .select('*', { count: 'exact', head: true })
+    .eq('featured', true)
+
   stats.value.projects = projectCount || 0
+  stats.value.featured = featuredCount || 0
 }
 
 // Logout with confirmation and animation

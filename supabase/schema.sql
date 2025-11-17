@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS projects (
   description TEXT NOT NULL,
   image_url TEXT,
   tags JSONB DEFAULT '[]'::jsonb,
+  featured BOOLEAN DEFAULT false,
+  featured_order INTEGER,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -96,6 +98,7 @@ CREATE POLICY "Authenticated users can delete project images"
 -- =====================================================
 
 CREATE INDEX IF NOT EXISTS idx_projects_created_at ON projects(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(featured, featured_order);
 
 -- =====================================================
 -- TRIGGER TO AUTO-UPDATE updated_at
@@ -238,5 +241,114 @@ INSERT INTO page_content (section_key, content) VALUES (
 -- Trigger for page_content
 CREATE TRIGGER update_page_content_updated_at
   BEFORE UPDATE ON page_content
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- ABOUT CONTENT TABLE (FOR EDITABLE ABOUT PAGE)
+-- =====================================================
+
+-- Create about_content table for managing about page sections
+CREATE TABLE IF NOT EXISTS about_content (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  content JSONB NOT NULL, -- Flexible JSON structure for about page
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE about_content ENABLE ROW LEVEL SECURITY;
+
+-- =====================================================
+-- RLS POLICIES FOR ABOUT CONTENT
+-- =====================================================
+
+-- Policy: Anyone can view about content (SELECT)
+CREATE POLICY "Public can view about content"
+  ON about_content
+  FOR SELECT
+  TO public
+  USING (true);
+
+-- Policy: Only authenticated users (admin) can update about content
+CREATE POLICY "Authenticated users can update about content"
+  ON about_content
+  FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
+
+-- Policy: Only authenticated users (admin) can insert about content
+CREATE POLICY "Authenticated users can insert about content"
+  ON about_content
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+-- =====================================================
+-- DEFAULT ABOUT CONTENT (SEED DATA)
+-- =====================================================
+
+INSERT INTO about_content (content) VALUES (
+  '{
+    "hero": {
+      "paragraphs": [
+        "Hi! I''m Anna Ericyan, a passionate graphic designer with a love for creating visual stories that captivate and inspire.",
+        "With years of experience in branding, print design, and digital illustration, I help businesses and individuals bring their creative visions to life through thoughtful, beautiful design.",
+        "My approach combines creativity with strategy, ensuring every project not only looks amazing but also achieves its goals."
+      ]
+    },
+    "skills": {
+      "title": "What I Do",
+      "description": "Specialized skills and services I offer to bring your vision to life",
+      "items": [
+        {
+          "title": "Branding & Identity",
+          "description": "Creating memorable brand identities with logos and visual guidelines"
+        },
+        {
+          "title": "Print Design",
+          "description": "Eye-catching posters, flyers, and business cards that leave lasting impressions"
+        },
+        {
+          "title": "Digital Illustrations",
+          "description": "Custom illustrations and digital artwork that captivate audiences"
+        },
+        {
+          "title": "Packaging Design",
+          "description": "Stunning product packaging that stands out on shelves and online"
+        }
+      ]
+    },
+    "experience": {
+      "title": "Experience",
+      "description": "My journey in design",
+      "items": [
+        {
+          "title": "Senior Graphic Designer",
+          "period": "2020 - Present",
+          "description": "Leading creative projects and mentoring junior designers while delivering exceptional brand experiences."
+        },
+        {
+          "title": "Freelance Designer",
+          "period": "2018 - 2020",
+          "description": "Worked with diverse clients creating branding, illustrations, and print materials."
+        },
+        {
+          "title": "Junior Designer",
+          "period": "2016 - 2018",
+          "description": "Developed foundational skills in design, learned industry best practices, and contributed to team projects."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Let''s Create Together",
+      "subtitle": "I''m always excited to work on new projects and collaborate with passionate people."
+    }
+  }'::jsonb
+) ON CONFLICT DO NOTHING;
+
+-- Trigger for about_content
+CREATE TRIGGER update_about_content_updated_at
+  BEFORE UPDATE ON about_content
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();

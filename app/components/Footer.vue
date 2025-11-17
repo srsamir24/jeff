@@ -24,7 +24,7 @@
           <!-- Social Links -->
           <div class="flex items-center space-x-3">
             <span class="text-sm text-light-blue/70">Follow:</span>
-            <a href="#"
+            <a href="https://instagram.com/annaericyan" target="_blank" rel="noopener noreferrer"
               class="group w-10 h-10 rounded-full bg-portfolio-white/10 hover:bg-bright-pink text-light-blue hover:text-portfolio-white flex items-center justify-center transition-all duration-300 hover:scale-110"
               aria-label="Instagram">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@
                   d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z" />
               </svg>
             </a>
-            <a href="#"
+            <a href="https://behance.net/annaericyan" target="_blank" rel="noopener noreferrer"
               class="group w-10 h-10 rounded-full bg-portfolio-white/10 hover:bg-bright-pink text-light-blue hover:text-portfolio-white flex items-center justify-center transition-all duration-300 hover:scale-110"
               aria-label="Behance">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
                   d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168z" />
               </svg>
             </a>
-            <a href="#"
+            <a href="https://dribbble.com/annaericyan" target="_blank" rel="noopener noreferrer"
               class="group w-10 h-10 rounded-full bg-portfolio-white/10 hover:bg-bright-pink text-light-blue hover:text-portfolio-white flex items-center justify-center transition-all duration-300 hover:scale-110"
               aria-label="Dribbble">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -134,8 +134,7 @@
             &copy; {{ new Date().getFullYear() }} Anna Ericyan. All rights reserved.
           </p>
           <div class="flex items-center space-x-6 text-sm text-light-blue/70">
-            <a href="#" class="hover:text-lighter-pink transition-colors">Privacy Policy</a>
-            <a href="#" class="hover:text-lighter-pink transition-colors">Terms of Service</a>
+            <span>Made with ❤️ by Anna Ericyan</span>
           </div>
         </div>
       </div>

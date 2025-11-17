@@ -21,26 +21,17 @@
           </p>
 
           <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-            <AppButton
-              :to="ctaLink || '/work'"
-              variant="secondary"
-              size="lg"
-            >
-              {{ ctaText || 'View My Work' }}
-              <template #iconRight>
-                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </template>
-            </AppButton>
+            <NuxtLink to="/work">
+              <AppButton variant="secondary" size="lg">
+                View My Work
+              </AppButton>
+            </NuxtLink>
 
-            <AppButton
-              to="/contact"
-              variant="outline"
-              size="lg"
-            >
-              Let's Connect
-            </AppButton>
+            <NuxtLink to="/contact">
+              <AppButton variant="outline" size="lg">
+                Let's Connect
+              </AppButton>
+            </NuxtLink>
           </div>
         </div>
 
@@ -75,14 +66,6 @@
 <script setup>
 defineProps({
   subtitle: {
-    type: String,
-    default: ''
-  },
-  ctaText: {
-    type: String,
-    default: ''
-  },
-  ctaLink: {
     type: String,
     default: ''
   }

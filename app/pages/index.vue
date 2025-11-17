@@ -1,6 +1,9 @@
 <template>
-  <NuxtLayout name="default">
-    <Hero />
+  <Hero
+    :subtitle="heroContent.subtitle"
+    :cta-text="heroContent.ctaText"
+    :cta-link="heroContent.ctaLink"
+  />
 
     <!-- Featured Work Section -->
     <section class="py-20 bg-portfolio-white">
@@ -17,48 +20,41 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <ProjectCard
-            title="Brand Identity Design"
-            description="Logo & Visual Identity System"
-            gradient-class="bg-linear-to-br from-light-green to-light-blue"
-            :tags="[
-              { label: 'Branding', class: 'bg-light-green/20 text-light-green' },
-              { label: 'Identity', class: 'bg-light-blue/20 text-light-blue' }
-            ]"
-          />
+        <!-- Loading State -->
+        <div v-if="loadingProjects" class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
+        </div>
 
+        <!-- Projects Grid -->
+        <div v-else-if="featuredProjects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <ProjectCard
-            title="Event Poster Series"
-            description="Music Festival Marketing Campaign"
-            gradient-class="bg-linear-to-br from-bright-pink to-lighter-pink"
-            :tags="[
-              { label: 'Print', class: 'bg-bright-pink/20 text-bright-pink' },
-              { label: 'Marketing', class: 'bg-lighter-pink/40 text-bright-pink' }
-            ]"
-          />
-
-          <ProjectCard
-            title="Product Packaging"
-            description="Organic Skincare Line"
-            gradient-class="bg-linear-to-br from-blue-purple to-light-blue"
-            :tags="[
-              { label: 'Packaging', class: 'bg-blue-purple/20 text-blue-purple' },
-              { label: 'Product', class: 'bg-light-blue/20 text-light-blue' }
-            ]"
+            v-for="project in featuredProjects"
+            :key="project.id"
+            :title="project.title"
+            :description="project.description"
+            :image-url="project.image_url"
+            :tags="project.tags"
           />
         </div>
 
+        <!-- Empty State -->
+        <div v-else class="text-center py-12">
+          <p class="text-gray-500">No projects to display yet.</p>
+        </div>
+
         <div class="text-center mt-12">
-          <NuxtLink
+          <AppButton
             to="/work"
-            class="group inline-flex items-center space-x-2 px-8 py-4 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+            variant="primary"
+            size="lg"
           >
-            <span>View All Projects</span>
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </NuxtLink>
+            View All Projects
+            <template #iconRight>
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </template>
+          </AppButton>
         </div>
       </div>
     </section>
@@ -142,10 +138,13 @@
     <section class="py-16 bg-portfolio-white">
       <div class="container mx-auto px-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <StatCard value="150+" label="Projects Completed" color-class="text-blue-purple" />
-          <StatCard value="50+" label="Happy Clients" color-class="text-bright-pink" />
-          <StatCard value="5+" label="Years Experience" color-class="text-light-green" />
-          <StatCard value="15+" label="Awards Won" color-class="text-light-blue" />
+          <StatCard
+            v-for="(stat, index) in statsContent.stats"
+            :key="index"
+            :value="stat.value"
+            :label="stat.label"
+            :color-class="stat.colorClass"
+          />
         </div>
       </div>
     </section>
@@ -157,32 +156,104 @@
 
       <div class="container mx-auto px-6 text-center relative z-10">
         <h2 class="text-4xl md:text-5xl font-bold text-portfolio-white mb-6">
-          Ready to Bring Your Vision to Life?
+          {{ ctaContent.title || 'Ready to Bring Your Vision to Life?' }}
         </h2>
         <p class="text-xl text-light-blue mb-10 max-w-2xl mx-auto">
-          Let's collaborate to create something extraordinary that resonates with your audience and elevates your brand.
+          {{ ctaContent.subtitle || "Let's collaborate to create something extraordinary that resonates with your audience and elevates your brand." }}
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <NuxtLink
-            to="/contact"
-            class="group inline-flex items-center justify-center space-x-2 px-10 py-5 bg-bright-pink text-portfolio-white rounded-full font-semibold hover:bg-lighter-pink transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 text-lg"
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+          <AppButton
+            :to="ctaContent.primaryButtonLink || '/contact'"
+            variant="secondary"
+            size="xl"
           >
-            <span>Start a Project</span>
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </NuxtLink>
-          <NuxtLink
-            to="/work"
-            class="inline-flex items-center justify-center px-10 py-5 bg-portfolio-white text-blue-purple rounded-full font-semibold hover:bg-light-blue/20 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 text-lg"
+            {{ ctaContent.primaryButtonText || 'Start a Project' }}
+            <template #iconRight>
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </template>
+          </AppButton>
+
+          <AppButton
+            :to="ctaContent.secondaryButtonLink || '/work'"
+            variant="outline"
+            size="xl"
           >
-            View Portfolio
-          </NuxtLink>
+            {{ ctaContent.secondaryButtonText || 'View Portfolio' }}
+          </AppButton>
         </div>
       </div>
     </section>
-  </NuxtLayout>
 </template>
 
 <script setup>
+const supabase = useSupabaseClient()
+
+// Fetch featured projects (latest 3)
+const featuredProjects = ref([])
+const loadingProjects = ref(true)
+
+// Page content
+const heroContent = ref({
+  subtitle: '',
+  ctaText: '',
+  ctaLink: ''
+})
+
+const statsContent = ref({
+  stats: []
+})
+
+const ctaContent = ref({
+  title: '',
+  subtitle: '',
+  primaryButtonText: '',
+  primaryButtonLink: '',
+  secondaryButtonText: '',
+  secondaryButtonLink: ''
+})
+
+const fetchFeaturedProjects = async () => {
+  loadingProjects.value = true
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  if (error) {
+    console.error('Error fetching projects:', error)
+  } else {
+    featuredProjects.value = data || []
+  }
+  loadingProjects.value = false
+}
+
+const fetchPageContent = async () => {
+  const { data, error } = await supabase
+    .from('page_content')
+    .select('*')
+
+  if (error) {
+    console.error('Error fetching page content:', error)
+    return
+  }
+
+  // Map content to refs
+  data.forEach(section => {
+    if (section.section_key === 'hero') {
+      heroContent.value = section.content
+    } else if (section.section_key === 'stats') {
+      statsContent.value = section.content
+    } else if (section.section_key === 'cta') {
+      ctaContent.value = section.content
+    }
+  })
+}
+
+onMounted(() => {
+  fetchFeaturedProjects()
+  fetchPageContent()
+})
 </script>

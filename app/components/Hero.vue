@@ -17,26 +17,30 @@
           </h1>
 
           <p class="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-xl">
-            A passionate <span class="font-semibold text-blue-purple">graphics designer</span> crafting beautiful,
-            meaningful visual experiences that tell your story and captivate your audience.
+            {{ subtitle || 'A passionate graphics designer crafting beautiful, meaningful visual experiences that tell your story and captivate your audience.' }}
           </p>
 
           <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-            <NuxtLink
-              to="/work"
-              class="group px-8 py-4 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2"
+            <AppButton
+              :to="ctaLink || '/work'"
+              variant="secondary"
+              size="lg"
             >
-              <span>View My Work</span>
-              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-              </svg>
-            </NuxtLink>
-            <NuxtLink
+              {{ ctaText || 'View My Work' }}
+              <template #iconRight>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </template>
+            </AppButton>
+
+            <AppButton
               to="/contact"
-              class="px-8 py-4 bg-portfolio-white text-blue-purple border-2 border-blue-purple rounded-full font-semibold hover:bg-blue-purple hover:text-portfolio-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              variant="outline"
+              size="lg"
             >
               Let's Connect
-            </NuxtLink>
+            </AppButton>
           </div>
         </div>
 
@@ -69,4 +73,18 @@
 </template>
 
 <script setup>
+defineProps({
+  subtitle: {
+    type: String,
+    default: ''
+  },
+  ctaText: {
+    type: String,
+    default: ''
+  },
+  ctaLink: {
+    type: String,
+    default: ''
+  }
+})
 </script>

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/supabase": "^2.0.1",
     "@tailwindcss/vite": "^4.1.17",
     "init": "^0.1.2",
     "nuxt": "^4.2.1",

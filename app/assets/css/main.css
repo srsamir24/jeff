@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Gendy';
+  src: url('~/assets/font/Gendy.woff2') format('woff2'),
+       url('~/assets/font/Gendy.woff') format('woff'),
+       url('~/assets/font/Gendy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-light-green: #a0dd88;
   --color-bright-pink: #e64191;

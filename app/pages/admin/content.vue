@@ -241,11 +241,11 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const toast = useToast()
 
 // State
 const loading = ref(true)
 const saving = ref(false)
-const showSuccess = ref(false)
 const activeTab = ref('hero')
 
 const tabs = [
@@ -293,7 +293,7 @@ const fetchContent = async () => {
     })
   } catch (error) {
     console.error('Error fetching content:', error)
-    alert('Error loading content. Please refresh the page.')
+    toast.error('Error loading content. Please refresh the page.')
   } finally {
     loading.value = false
   }
@@ -311,14 +311,10 @@ const saveSection = async (sectionKey) => {
 
     if (error) throw error
 
-    // Show success message
-    showSuccess.value = true
-    setTimeout(() => {
-      showSuccess.value = false
-    }, 3000)
+    toast.success('Changes saved successfully!')
   } catch (error) {
     console.error('Error saving content:', error)
-    alert('Error saving changes. Please try again.')
+    toast.error('Error saving changes. Please try again.')
   } finally {
     saving.value = false
   }

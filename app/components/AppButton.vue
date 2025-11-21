@@ -1,6 +1,8 @@
 <template>
-  <button
-    :type="type"
+  <component
+    :is="componentType"
+    :to="to"
+    :type="!to ? type : undefined"
     :disabled="disabled || loading"
     :class="buttonClasses"
     @click="handleClick"
@@ -30,11 +32,15 @@
     <span v-if="$slots.iconRight && !loading" class="flex-shrink-0">
       <slot name="iconRight" />
     </span>
-  </button>
+  </component>
 </template>
 
 <script setup>
 const props = defineProps({
+  to: {
+    type: String,
+    default: ''
+  },
   variant: {
     type: String,
     default: 'primary', // primary, secondary, outline, ghost, danger
@@ -71,6 +77,9 @@ const props = defineProps({
     validator: (value) => ['sm', 'md', 'lg', 'xl', '2xl', '3xl', 'full'].includes(value)
   }
 })
+
+// Determine component type based on 'to' prop
+const componentType = computed(() => props.to ? resolveComponent('NuxtLink') : 'button')
 
 const emit = defineEmits(['click'])
 

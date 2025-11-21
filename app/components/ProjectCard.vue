@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   projectId: {
     type: String,
     required: true
@@ -70,5 +70,10 @@ defineProps({
     type: Array,
     default: () => []
   }
+})
+
+// Ensure tags is always an array
+const tags = computed(() => {
+  return Array.isArray(props.tags) ? props.tags : []
 })
 </script>

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS projects (
   description TEXT NOT NULL,
   image_url TEXT,
   tags JSONB DEFAULT '[]'::jsonb,
+  content_blocks JSONB DEFAULT '[]'::jsonb,
   featured BOOLEAN DEFAULT false,
   featured_order INTEGER,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

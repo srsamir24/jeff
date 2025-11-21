@@ -96,17 +96,20 @@
         <p class="text-xl md:text-2xl text-portfolio-white/95 mb-10 max-w-2xl mx-auto leading-relaxed">
           Let's collaborate and create something beautiful together.
         </p>
-        <div class="inline-block">
-          <AppButton to="/contact" size="xl"
-            class="text-bright-pink hover:bg-portfolio-white/90 hover:shadow-[0_0_50px_rgba(255,255,255,0.5)] shadow-2xl border-0">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+          <AppButton to="/contact" variant="secondary" size="xl">
             Get In Touch
             <template #iconRight>
-              <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
                 </path>
               </svg>
             </template>
+          </AppButton>
+
+          <AppButton to="/" variant="outline" size="xl">
+            Back to Home
           </AppButton>
         </div>
       </div>

@@ -79,19 +79,27 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex gap-2">
-              <button
-                @click="editProject(project)"
-                class="flex-1 px-4 py-2 bg-light-blue/10 text-light-blue rounded-lg text-sm font-medium hover:bg-light-blue/20 transition-all"
+            <div class="flex flex-col gap-2">
+              <NuxtLink
+                :to="`/admin/project-content/${project.id}`"
+                class="px-4 py-2 bg-blue-purple/10 text-blue-purple rounded-lg text-sm font-medium hover:bg-blue-purple/20 transition-all text-center"
               >
-                Edit
-              </button>
-              <button
-                @click="deleteProject(project.id)"
-                class="flex-1 px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all"
-              >
-                Delete
-              </button>
+                Edit Content
+              </NuxtLink>
+              <div class="flex gap-2">
+                <button
+                  @click="editProject(project)"
+                  class="flex-1 px-4 py-2 bg-light-blue/10 text-light-blue rounded-lg text-sm font-medium hover:bg-light-blue/20 transition-all"
+                >
+                  Edit Info
+                </button>
+                <button
+                  @click="deleteProject(project.id)"
+                  class="flex-1 px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -141,7 +149,7 @@
                 required
                 rows="3"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Logo & Visual Identity System"
+                placeholder="Brief description for project cards"
               ></textarea>
             </div>
 
@@ -172,39 +180,25 @@
               </div>
             </div>
 
-            <!-- Tags -->
+            <!-- Project Type -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-              <div class="space-y-2">
-                <div v-for="(tag, index) in formData.tags" :key="index" class="flex gap-2">
-                  <input
-                    v-model="tag.label"
-                    type="text"
-                    placeholder="Tag name"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  />
-                  <input
-                    v-model="tag.class"
-                    type="text"
-                    placeholder="Tag class (e.g., bg-light-green/20 text-light-green)"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  />
-                  <button
-                    type="button"
-                    @click="removeTag(index)"
-                    class="px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg hover:bg-bright-pink/20"
-                  >
-                    Remove
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  @click="addTag"
-                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all"
-                >
-                  + Add Tag
-                </button>
-              </div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
+              <select
+                v-model="formData.project_type"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
+              >
+                <option value="">Select a project type</option>
+                <option value="branding">Branding & Identity</option>
+                <option value="print">Print Design</option>
+                <option value="digital">Digital Design</option>
+                <option value="packaging">Packaging Design</option>
+                <option value="illustration">Illustration</option>
+                <option value="ui-ux">UI/UX Design</option>
+                <option value="photography">Photography</option>
+                <option value="web">Web Design</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-1">Choose the primary type for this project</p>
             </div>
 
             <!-- Actions -->
@@ -238,6 +232,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const toast = useToast()
 
 // State
 const projects = ref([])
@@ -252,8 +247,62 @@ const formData = ref({
   title: '',
   description: '',
   image_url: '',
-  tags: []
+  project_type: ''
 })
+
+// Map project types to tags with styling
+const projectTypeToTags = (type) => {
+  const tagMap = {
+    'branding': [
+      { label: 'Branding', class: 'bg-bright-pink/20 text-bright-pink' },
+      { label: 'Identity', class: 'bg-blue-purple/20 text-blue-purple' }
+    ],
+    'print': [
+      { label: 'Print Design', class: 'bg-light-green/20 text-light-green' }
+    ],
+    'digital': [
+      { label: 'Digital Design', class: 'bg-light-blue/20 text-light-blue' }
+    ],
+    'packaging': [
+      { label: 'Packaging', class: 'bg-blue-purple/20 text-blue-purple' },
+      { label: 'Product Design', class: 'bg-light-green/20 text-light-green' }
+    ],
+    'illustration': [
+      { label: 'Illustration', class: 'bg-bright-pink/20 text-bright-pink' },
+      { label: 'Digital Art', class: 'bg-light-blue/20 text-light-blue' }
+    ],
+    'ui-ux': [
+      { label: 'UI/UX Design', class: 'bg-light-blue/20 text-light-blue' },
+      { label: 'Mobile', class: 'bg-blue-purple/20 text-blue-purple' }
+    ],
+    'photography': [
+      { label: 'Photography', class: 'bg-light-green/20 text-light-green' }
+    ],
+    'web': [
+      { label: 'Web Design', class: 'bg-light-blue/20 text-light-blue' },
+      { label: 'Development', class: 'bg-blue-purple/20 text-blue-purple' }
+    ]
+  }
+  return tagMap[type] || []
+}
+
+// Extract project type from tags
+const tagsToProjectType = (tags) => {
+  if (!tags || tags.length === 0) return ''
+
+  const firstTag = tags[0]?.label?.toLowerCase() || ''
+
+  if (firstTag.includes('branding') || firstTag.includes('identity')) return 'branding'
+  if (firstTag.includes('print')) return 'print'
+  if (firstTag.includes('digital') && !firstTag.includes('art')) return 'digital'
+  if (firstTag.includes('packaging') || firstTag.includes('product')) return 'packaging'
+  if (firstTag.includes('illustration') || firstTag.includes('art')) return 'illustration'
+  if (firstTag.includes('ui') || firstTag.includes('ux') || firstTag.includes('mobile')) return 'ui-ux'
+  if (firstTag.includes('photo')) return 'photography'
+  if (firstTag.includes('web')) return 'web'
+
+  return ''
+}
 
 // Computed: Projects to display (with pagination)
 const displayedProjects = computed(() => {
@@ -275,6 +324,7 @@ const fetchProjects = async () => {
 
   if (error) {
     console.error('Error fetching projects:', error)
+    toast.error('Failed to load projects')
   } else {
     projects.value = data
   }
@@ -304,22 +354,13 @@ const handleFileUpload = async (event) => {
       .getPublicUrl(filePath)
 
     formData.value.image_url = publicUrl
+    toast.success('Image uploaded successfully')
   } catch (error) {
     console.error('Error uploading file:', error)
-    alert('Error uploading file. Please try again.')
+    toast.error('Error uploading file. Please try again.')
   } finally {
     uploading.value = false
   }
-}
-
-// Add tag
-const addTag = () => {
-  formData.value.tags.push({ label: '', class: '' })
-}
-
-// Remove tag
-const removeTag = (index) => {
-  formData.value.tags.splice(index, 1)
 }
 
 // Save project
@@ -329,7 +370,7 @@ const saveProject = async () => {
       title: formData.value.title,
       description: formData.value.description,
       image_url: formData.value.image_url,
-      tags: formData.value.tags
+      tags: projectTypeToTags(formData.value.project_type)
     }
 
     if (editingProject.value) {
@@ -340,6 +381,7 @@ const saveProject = async () => {
         .eq('id', editingProject.value.id)
 
       if (error) throw error
+      toast.success('Project updated successfully')
     } else {
       // Create new project
       const { error } = await supabase
@@ -347,6 +389,7 @@ const saveProject = async () => {
         .insert([projectData])
 
       if (error) throw error
+      toast.success('Project created successfully')
     }
 
     itemsToShow.value = 5 // Reset to show first 5
@@ -354,7 +397,7 @@ const saveProject = async () => {
     closeModal()
   } catch (error) {
     console.error('Error saving project:', error)
-    alert('Error saving project. Please try again.')
+    toast.error('Error saving project. Please try again.')
   }
 }
 
@@ -365,7 +408,7 @@ const editProject = (project) => {
     title: project.title,
     description: project.description,
     image_url: project.image_url,
-    tags: [...project.tags]
+    project_type: tagsToProjectType(project.tags)
   }
   showAddModal.value = true
 }
@@ -384,9 +427,10 @@ const deleteProject = async (id) => {
 
     itemsToShow.value = 5 // Reset to show first 5
     await fetchProjects()
+    toast.success('Project deleted successfully')
   } catch (error) {
     console.error('Error deleting project:', error)
-    alert('Error deleting project. Please try again.')
+    toast.error('Error deleting project. Please try again.')
   }
 }
 
@@ -398,7 +442,7 @@ const closeModal = () => {
     title: '',
     description: '',
     image_url: '',
-    tags: []
+    project_type: ''
   }
 }
 

@@ -4,7 +4,7 @@
       <NuxtPage />
 
     </NuxtLayout>
-
+    <ToastContainer />
   </div>
 </template>
 

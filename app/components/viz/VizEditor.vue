@@ -111,7 +111,7 @@
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Style</h2>
                 <span class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600 capitalize">{{ selectedBlock.type
-                }}</span>
+                    }}</span>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 space-y-2">
@@ -193,9 +193,25 @@
                                     :class="[gradient.class, selectedBlock.props.gradient === gradient.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']">
                                     <span class="text-transparent bg-clip-text" :class="gradient.class">{{
                                         gradient.label
-                                        }}</span>
+                                    }}</span>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Gradient Animation Toggle -->
+                        <div v-if="selectedBlock.props.gradientText">
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="text-sm font-medium text-gray-700">Gradient Animation</span>
+                                <button
+                                    @click="updateStyle('gradientAnimation', !selectedBlock.props.gradientAnimation)"
+                                    class="relative w-11 h-6 rounded-full transition-colors"
+                                    :class="selectedBlock.props.gradientAnimation ? 'bg-blue-500' : 'bg-gray-300'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                                        :class="{ 'translate-x-5': selectedBlock.props.gradientAnimation }"></span>
+                                </button>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">Animate the text gradient (like homepage)</p>
                         </div>
 
                         <!-- Font Weight -->
@@ -212,27 +228,161 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Spacing Section -->
-            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <button @click="expandedSections.spacing = !expandedSections.spacing"
-                    class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
-                    <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Spacing</h3>
-                    <svg class="w-4 h-4 text-gray-500 transition-transform"
-                        :class="{ 'rotate-180': expandedSections.spacing }" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
+                <!-- Spacing Section -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.spacing = !expandedSections.spacing"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Spacing</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.spacing }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                <div v-show="expandedSections.spacing" class="p-4 space-y-4">
+                    <div v-show="expandedSections.spacing" class="p-4 space-y-4">
 
-                    <!-- Padding -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Padding</label>
-                        <div class="grid grid-cols-5 gap-1">
-                            <button v-for="pad in paddings" :key="pad.value" @click="updateStyle('padding', pad.value)"
+                        <!-- Padding -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Padding</label>
+                            <div class="grid grid-cols-5 gap-1">
+                                <button v-for="pad in paddings" :key="pad.value"
+                                    @click="updateStyle('padding', pad.value)"
+                                    class="px-2 py-1.5 text-xs rounded border transition-colors"
+                                    :class="selectedBlock.props.padding === pad.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                    {{ pad.label }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background Section -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.background = !expandedSections.background"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Background</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.background }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div v-show="expandedSections.background" class="p-4 space-y-4">
+                        <!-- Background Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button v-for="color in bgColors" :key="color.value"
+                                    @click="updateStyle('bgColor', color.value)"
+                                    class="w-8 h-8 rounded-lg border-2 transition-transform hover:scale-110"
+                                    :class="[color.class, selectedBlock.props.bgColor === color.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']"
+                                    :title="color.label">
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Gradient Toggle -->
+                        <div>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="text-sm font-medium text-gray-700">Enable Gradient</span>
+                                <button
+                                    @click="updateStyle('bgGradientEnabled', !selectedBlock.props.bgGradientEnabled)"
+                                    class="relative w-11 h-6 rounded-full transition-colors"
+                                    :class="selectedBlock.props.bgGradientEnabled ? 'bg-blue-500' : 'bg-gray-300'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                                        :class="{ 'translate-x-5': selectedBlock.props.bgGradientEnabled }"></span>
+                                </button>
+                            </label>
+                        </div>
+
+                        <!-- Gradient Presets -->
+                        <div v-if="selectedBlock.props.bgGradientEnabled" class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Gradient Preset</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button v-for="gradient in gradientPresets" :key="gradient.value"
+                                    @click="updateStyle('bgGradient', gradient.value)"
+                                    class="h-12 rounded-lg border-2 transition-transform hover:scale-105"
+                                    :class="[gradient.class, selectedBlock.props.bgGradient === gradient.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-transparent']"
+                                    :title="gradient.label">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Animation Section -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.animation = !expandedSections.animation"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Animation</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.animation }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div v-show="expandedSections.animation" class="p-4 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Effect</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button v-for="anim in animations" :key="anim.value"
+                                    @click="updateStyle('animation', anim.value)"
+                                    class="px-3 py-2 text-sm rounded-lg border transition-colors"
+                                    :class="selectedBlock.props.animation === anim.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                    {{ anim.label }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decorations Section -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.decorations = !expandedSections.decorations"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Text Decorations</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.decorations }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div v-show="expandedSections.decorations" class="p-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button v-for="dec in decorations" :key="dec.value" @click="toggleDecoration(dec.value)"
+                                class="px-3 py-2 text-sm rounded-lg border transition-colors"
+                                :class="(selectedBlock.props.decorations || []).includes(dec.value) ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                <span :class="dec.class">{{ dec.label }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text/Hero Block Options -->
+                <div v-if="['text', 'hero'].includes(selectedBlock.type)"
+                    class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.textOptions = !expandedSections.textOptions"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Text Options</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.textOptions }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div v-show="expandedSections.textOptions" class="p-4 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Heading Tag</label>
+                            <select
+                                :value="selectedBlock.props.headingTag || (selectedBlock.type === 'hero' ? 'h1' : 'p')"
+                                @change="updateStyle('headingTag', ($event.target as HTMLSelectElement).value)"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="h1">H1 - Main Title</option>
                                 <option value="h2">H2 - Section</option>
@@ -240,68 +390,68 @@
                                 <option value="h4">H4 - Small</option>
                                 <option value="p">Paragraph</option>
                                 <option value="div">Div (No semantic)</option>
-                                </select>
-                        </div>
-                    </div>
-
-                    <!-- Block-Specific Options -->
-                    <div v-if="selectedBlock.type === 'split'"
-                        class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button @click="expandedSections.layoutOptions = !expandedSections.layoutOptions"
-                            class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
-                            <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Layout</h3>
-                            <svg class="w-4 h-4 text-gray-500 transition-transform"
-                                :class="{ 'rotate-180': expandedSections.layoutOptions }" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        <div v-show="expandedSections.layoutOptions" class="p-4 space-y-4">
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Heading Tag</label>
-                                <select :value="selectedBlock.props.headingTag || 'h3'"
-                                    @change="updateStyle('headingTag', ($event.target as HTMLSelectElement).value)"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="h1">H1 - Main Title</option>
-                                    <option value="h2">H2 - Section</option>
-                                    <option value="h3">H3 - Subsection</option>
-                                    <option value="h4">H4 - Small</option>
-                                    <option value="p">Paragraph</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span class="text-sm font-medium text-gray-700">Reverse Layout</span>
-                                    <button @click="updateStyle('reverse', !selectedBlock.props.reverse)"
-                                        class="relative w-11 h-6 rounded-full transition-colors"
-                                        :class="selectedBlock.props.reverse ? 'bg-blue-500' : 'bg-gray-300'">
-                                        <span
-                                            class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
-                                            :class="{ 'translate-x-5': selectedBlock.props.reverse }"></span>
-                                    </button>
-                                </label>
-                            </div>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Empty State for Right Panel -->
-                <div v-else-if="!previewMode"
-                    class="w-80 bg-white border-l border-gray-200 flex flex-col items-center justify-center text-gray-400 p-6">
-                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                    </svg>
-                    <p class="text-sm font-medium text-center">Select a block to edit its style</p>
-                </div>
+                <!-- Block-Specific Options -->
+                <div v-if="selectedBlock.type === 'split'" class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.layoutOptions = !expandedSections.layoutOptions"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Layout</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.layoutOptions }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                <!-- Hidden file input for image uploads -->
-                <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
+                    <div v-show="expandedSections.layoutOptions" class="p-4 space-y-4">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Heading Tag</label>
+                            <select :value="selectedBlock.props.headingTag || 'h3'"
+                                @change="updateStyle('headingTag', ($event.target as HTMLSelectElement).value)"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="h1">H1 - Main Title</option>
+                                <option value="h2">H2 - Section</option>
+                                <option value="h3">H3 - Subsection</option>
+                                <option value="h4">H4 - Small</option>
+                                <option value="p">Paragraph</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="text-sm font-medium text-gray-700">Reverse Layout</span>
+                                <button @click="updateStyle('reverse', !selectedBlock.props.reverse)"
+                                    class="relative w-11 h-6 rounded-full transition-colors"
+                                    :class="selectedBlock.props.reverse ? 'bg-blue-500' : 'bg-gray-300'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                                        :class="{ 'translate-x-5': selectedBlock.props.reverse }"></span>
+                                </button>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- Empty State for Right Panel -->
+        <div v-else-if="!previewMode"
+            class="w-80 bg-white border-l border-gray-200 flex flex-col items-center justify-center text-gray-400 p-6">
+            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+            </svg>
+            <p class="text-sm font-medium text-center">Select a block to edit its style</p>
+        </div>
+
+        <!-- Hidden file input for image uploads -->
+        <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
+    </div>
 </template>
 
 <script setup lang="ts">

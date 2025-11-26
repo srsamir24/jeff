@@ -183,7 +183,7 @@ const fetchStats = async () => {
 }
 
 // Logout with confirmation and animation
-const logout = async () => {
+const handleLogout = async () => {
   const confirmed = await confirmDialog.confirm('You will be logged out of the admin panel.')
   if (!confirmed) return
 
@@ -192,9 +192,11 @@ const logout = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500)) // Small delay for animation
     await supabase.auth.signOut()
+    useToast().success('Logged out successfully')
     navigateTo('/admin/login')
   } catch (error) {
     console.error('Logout error:', error)
+    useToast().error('Failed to log out')
     loggingOut.value = false
   }
 }

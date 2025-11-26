@@ -6,7 +6,8 @@
         <div class="flex items-center space-x-4">
           <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+              </path>
             </svg>
           </NuxtLink>
           <h1 class="text-2xl font-bold text-gray-900">Featured Projects</h1>
@@ -27,7 +28,8 @@
       <div v-else class="mb-8 bg-light-blue/10 border border-light-blue/30 rounded-2xl p-6">
         <h2 class="text-lg font-bold text-gray-900 mb-2">How it works</h2>
         <p class="text-gray-700">
-          Toggle projects to mark them as featured. The first 4 featured projects will appear on the homepage in the "My Work" section.
+          Toggle projects to mark them as featured. The first 4 featured projects will appear on the homepage in the "My
+          Work" section.
           Drag and drop to reorder them.
         </p>
         <p class="text-sm text-gray-600 mt-2">
@@ -41,11 +43,8 @@
         <div v-if="featuredProjects.length > 0" class="mb-8">
           <h3 class="text-xl font-bold text-gray-900 mb-4">Featured Projects (Drag to reorder)</h3>
           <div class="space-y-3">
-            <div
-              v-for="(project, index) in featuredProjects"
-              :key="project.id"
-              class="group bg-portfolio-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border-2 border-bright-pink/30"
-            >
+            <div v-for="(project, index) in featuredProjects" :key="project.id"
+              class="group bg-portfolio-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border-2 border-bright-pink/30">
               <div class="flex items-center gap-4">
                 <!-- Drag Handle -->
                 <div class="cursor-move text-gray-400 hover:text-blue-purple">
@@ -55,16 +54,19 @@
                 </div>
 
                 <!-- Order Badge -->
-                <div class="w-10 h-10 rounded-full bg-bright-pink flex items-center justify-center text-portfolio-white font-bold">
+                <div
+                  class="w-10 h-10 rounded-full bg-bright-pink flex items-center justify-center text-portfolio-white font-bold">
                   {{ index + 1 }}
                 </div>
 
                 <!-- Project Image -->
                 <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  <img v-if="project.image_url" :src="project.image_url" :alt="project.title" class="w-full h-full object-cover" />
+                  <img v-if="project.image_url" :src="project.image_url" :alt="project.title"
+                    class="w-full h-full object-cover" />
                   <div v-else class="w-full h-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
                 </div>
@@ -78,34 +80,24 @@
                 <!-- Actions -->
                 <div class="flex items-center gap-2">
                   <!-- Move Up -->
-                  <button
-                    v-if="index > 0"
-                    @click="moveUp(index)"
-                    class="p-2 text-light-blue hover:bg-light-blue/10 rounded-lg transition-all"
-                    title="Move up"
-                  >
+                  <button v-if="index > 0" @click="moveUp(index)"
+                    class="p-2 text-light-blue hover:bg-light-blue/10 rounded-lg transition-all" title="Move up">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                     </svg>
                   </button>
 
                   <!-- Move Down -->
-                  <button
-                    v-if="index < featuredProjects.length - 1"
-                    @click="moveDown(index)"
-                    class="p-2 text-light-blue hover:bg-light-blue/10 rounded-lg transition-all"
-                    title="Move down"
-                  >
+                  <button v-if="index < featuredProjects.length - 1" @click="moveDown(index)"
+                    class="p-2 text-light-blue hover:bg-light-blue/10 rounded-lg transition-all" title="Move down">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                   </button>
 
                   <!-- Remove from Featured -->
-                  <button
-                    @click="toggleFeatured(project)"
-                    class="px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all"
-                  >
+                  <button @click="toggleFeatured(project)"
+                    class="px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all">
                     Remove
                   </button>
                 </div>
@@ -120,18 +112,17 @@
             {{ featuredProjects.length > 0 ? 'Other Projects' : 'All Projects' }}
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div
-              v-for="project in nonFeaturedProjects"
-              :key="project.id"
-              class="bg-portfolio-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all border border-gray-200"
-            >
+            <div v-for="project in nonFeaturedProjects" :key="project.id"
+              class="bg-portfolio-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all border border-gray-200">
               <div class="flex items-center gap-4">
                 <!-- Project Image -->
                 <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  <img v-if="project.image_url" :src="project.image_url" :alt="project.title" class="w-full h-full object-cover" />
+                  <img v-if="project.image_url" :src="project.image_url" :alt="project.title"
+                    class="w-full h-full object-cover" />
                   <div v-else class="w-full h-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
                 </div>
@@ -143,11 +134,8 @@
                 </div>
 
                 <!-- Add to Featured -->
-                <button
-                  @click="toggleFeatured(project)"
-                  :disabled="featuredCount >= 4"
-                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg text-sm font-medium hover:bg-light-green/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <button @click="toggleFeatured(project)" :disabled="featuredCount >= 4"
+                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg text-sm font-medium hover:bg-light-green/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   Add
                 </button>
               </div>
@@ -171,6 +159,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const toast = useToast()
 
 // State
 const projects = ref([])
@@ -201,6 +190,7 @@ const fetchProjects = async () => {
 
   if (error) {
     console.error('Error fetching projects:', error)
+    toast.error('Failed to load projects')
   } else {
     projects.value = data || []
   }
@@ -213,7 +203,7 @@ const toggleFeatured = async (project) => {
 
   // If adding to featured, check limit
   if (newFeaturedStatus && featuredCount.value >= 4) {
-    alert('You can only feature up to 4 projects. Remove one first.')
+    toast.warning('You can only feature up to 4 projects. Remove one first.')
     return
   }
 
@@ -241,9 +231,10 @@ const toggleFeatured = async (project) => {
     }
 
     await fetchProjects()
+    toast.success(newFeaturedStatus ? 'Project featured' : 'Project removed from featured')
   } catch (error) {
     console.error('Error updating featured status:', error)
-    alert('Error updating project. Please try again.')
+    toast.error('Error updating project. Please try again.')
   }
 }
 
@@ -269,7 +260,7 @@ const moveUp = async (index) => {
     await fetchProjects()
   } catch (error) {
     console.error('Error reordering:', error)
-    alert('Error reordering projects. Please try again.')
+    toast.error('Error reordering projects. Please try again.')
   }
 }
 
@@ -295,7 +286,7 @@ const moveDown = async (index) => {
     await fetchProjects()
   } catch (error) {
     console.error('Error reordering:', error)
-    alert('Error reordering projects. Please try again.')
+    toast.error('Error reordering projects. Please try again.')
   }
 }
 

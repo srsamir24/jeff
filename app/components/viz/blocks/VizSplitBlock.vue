@@ -22,24 +22,25 @@
 
                 <!-- Text Side -->
                 <div class="w-full md:w-1/2">
-                    <component :is="content.headingTag || 'h3'" class="text-2xl md:text-3xl font-bold mb-4" :class="[
-                        content.fontSize ? `text-${content.fontSize}` : '',
-                        content.textAlign ? `text-${content.textAlign}` : '',
-                        content.textColor && !content.gradientText ? `text-${content.textColor}` : '',
-                        content.fontWeight ? `font-${content.fontWeight}` : '',
-                        content.gradientText ? getGradientClasses(content.gradient || 'rainbow') + ' text-transparent bg-clip-text inline-block' : '',
-                        content.animation === 'pulse' ? 'animate-pulse' : '',
-                        content.animation === 'bounce' ? 'animate-bounce' : '',
-                        content.animation === 'fade-in' ? 'animate-fade-in' : '',
-                        content.animation === 'slide-in-left' ? 'animate-slide-in-left' : '',
-                        content.animation === 'slide-in-right' ? 'animate-slide-in-right' : '',
-                        (content.decorations || []).includes('underline') ? 'underline' : '',
-                        (content.decorations || []).includes('line-through') ? 'line-through' : '',
-                        (content.decorations || []).includes('highlight') ? 'bg-yellow-200' : '',
-                        (content.decorations || []).includes('uppercase') ? 'uppercase' : ''
-                    ]" :contenteditable="isEditor" @blur="updateTitle" v-html="content.title"></component>
+                    <component :is="content.headingTag || 'h3'" class="text-2xl md:text-3xl font-bold mb-4 outline-none"
+                        :class="[
+                            content.fontSize ? `text-${content.fontSize}` : '',
+                            content.textAlign ? `text-${content.textAlign}` : '',
+                            content.textColor && !content.gradientText ? `text-${content.textColor}` : '',
+                            content.fontWeight ? `font-${content.fontWeight}` : '',
+                            content.gradientText ? getGradientClasses(content.gradient || 'rainbow') + ' text-transparent bg-clip-text inline-block' : '',
+                            content.animation === 'pulse' ? 'animate-pulse' : '',
+                            content.animation === 'bounce' ? 'animate-bounce' : '',
+                            content.animation === 'fade-in' ? 'animate-fade-in' : '',
+                            content.animation === 'slide-in-left' ? 'animate-slide-in-left' : '',
+                            content.animation === 'slide-in-right' ? 'animate-slide-in-right' : '',
+                            (content.decorations || []).includes('underline') ? 'underline' : '',
+                            (content.decorations || []).includes('line-through') ? 'line-through' : '',
+                            (content.decorations || []).includes('highlight') ? 'bg-yellow-200' : '',
+                            (content.decorations || []).includes('uppercase') ? 'uppercase' : ''
+                        ]" :contenteditable="isEditor" @blur="updateTitle" v-html="content.title"></component>
 
-                    <div class="prose prose-lg prose-slate max-w-none" :class="[
+                    <div class="prose prose-lg prose-slate max-w-none outline-none" :class="[
                         content.fontSize ? `text-${content.fontSize}` : '',
                         content.textAlign ? `text-${content.textAlign}` : '',
                         content.textColor && !content.gradientText ? `text-${content.textColor}` : '',

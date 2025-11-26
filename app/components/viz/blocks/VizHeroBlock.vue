@@ -5,12 +5,13 @@
         content.padding ? `p-${content.padding}` : 'py-16'
     ]">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="prose prose-2xl md:prose-3xl font-bold mb-4" :class="[
+            <h2 class="prose prose-2xl md:prose-3xl font-bold mb-4 outline-none" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
                 content.textAlign ? `text-${content.textAlign}` : '',
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',
                 content.fontWeight ? `font-${content.fontWeight}` : '',
                 content.gradientText ? getGradientClasses(content.gradient || 'rainbow') + ' text-transparent bg-clip-text inline-block' : '',
+                content.gradientAnimation && content.gradientText ? 'animate-gradient' : '',
                 content.animation === 'pulse' ? 'animate-pulse' : '',
                 content.animation === 'bounce' ? 'animate-bounce' : '',
                 content.animation === 'fade-in' ? 'animate-fade-in' : '',
@@ -21,7 +22,7 @@
                 (content.decorations || []).includes('highlight') ? 'bg-yellow-200' : '',
                 (content.decorations || []).includes('uppercase') ? 'uppercase' : ''
             ]" :contenteditable="isEditor" @blur="updateTitle" v-html="content.title"></h2>
-            <p class="prose prose-lg md:prose-xl" :class="[
+            <p class="prose prose-lg md:prose-xl outline-none" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
                 content.textAlign ? `text-${content.textAlign}` : '',
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',

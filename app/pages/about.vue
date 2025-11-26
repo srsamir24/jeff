@@ -163,15 +163,11 @@ useHead({
   ]
 })
 
-// Default content
+// Default content (minimal to avoid flash)
 const aboutContent = ref({
   hero: {
     image: '',
-    paragraphs: [
-      "Hi! I'm Anna Ericyan, a passionate graphic designer with a love for creating visual stories that captivate and inspire.",
-      "With years of experience in branding, print design, and digital illustration, I help businesses and individuals bring their creative visions to life through thoughtful, beautiful design.",
-      "My approach combines creativity with strategy, ensuring every project not only looks amazing but also achieves its goals."
-    ]
+    paragraphs: []
   },
   skills: {
     title: "What I Do",
@@ -222,8 +218,16 @@ const aboutContent = ref({
   }
 })
 
+// Track if content has been fetched
+const contentFetched = ref(false)
+
 // Fetch content from database
 const fetchContent = async () => {
+  // Skip if already loaded
+  if (contentFetched.value) {
+    return
+  }
+
   try {
     const { data, error } = await supabase
       .from('about_content')
@@ -235,11 +239,16 @@ const fetchContent = async () => {
     }
 
     if (data && data.content) {
-      aboutContent.value = data.content
+      // Use Object.assign to update values without replacing the whole object
+      // This prevents reactivity issues and visual jumps
+      Object.assign(aboutContent.value, data.content)
     }
+
+    contentFetched.value = true
   } catch (error) {
     console.error('Error fetching about content:', error)
     // Keep default content if fetch fails
+    contentFetched.value = true
   }
 }
 

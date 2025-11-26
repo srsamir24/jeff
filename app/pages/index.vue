@@ -184,6 +184,12 @@ const ctaContent = ref({
 })
 
 const fetchFeaturedProjects = async () => {
+  // Skip if already loaded
+  if (featuredProjects.value.length > 0) {
+    loadingProjects.value = false
+    return
+  }
+
   loadingProjects.value = true
   const { data, error } = await supabase
     .from('projects')
@@ -201,6 +207,11 @@ const fetchFeaturedProjects = async () => {
 }
 
 const fetchPageContent = async () => {
+  // Skip if already loaded
+  if (heroContent.value.subtitle) {
+    return
+  }
+
   const { data, error } = await supabase
     .from('page_content')
     .select('*')

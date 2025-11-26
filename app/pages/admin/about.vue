@@ -361,10 +361,10 @@ const saveAllContent = async () => {
       if (error) throw error
     }
 
-    alert('Changes saved successfully!')
+    useToast().success('Changes saved successfully!')
   } catch (error) {
     console.error('Error saving content:', error)
-    alert('Error saving changes. Please try again.')
+    useToast().error('Error saving changes. Please try again.')
   } finally {
     saving.value = false
   }
@@ -422,7 +422,7 @@ const handleImageUpload = async (e) => {
     aboutContent.value.hero.image = publicUrl
   } catch (error) {
     console.error('Error uploading image:', error)
-    alert('Failed to upload image. Please try again.')
+    useToast().error('Failed to upload image. Please try again.')
   } finally {
     uploadingImage.value = false
     e.target.value = '' // Reset input

@@ -11,6 +11,7 @@
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',
                 content.fontWeight ? `font-${content.fontWeight}` : '',
                 content.gradientText ? getGradientClasses(content.gradient || 'rainbow') + ' text-transparent bg-clip-text inline-block' : '',
+                content.gradientAnimation && content.gradientText ? 'animate-gradient' : '',
                 content.animation === 'pulse' ? 'animate-pulse' : '',
                 content.animation === 'bounce' ? 'animate-bounce' : '',
                 content.animation === 'fade-in' ? 'animate-fade-in' : '',

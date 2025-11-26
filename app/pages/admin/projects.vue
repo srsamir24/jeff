@@ -6,7 +6,8 @@
         <div class="flex items-center space-x-4">
           <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+              </path>
             </svg>
           </NuxtLink>
           <h1 class="text-2xl font-bold text-gray-900">Manage Projects</h1>
@@ -26,38 +27,33 @@
       <!-- Projects Grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Add Project Card -->
-        <div
-          @click="showAddModal = true"
-          class="group cursor-pointer bg-linear-to-br from-blue-purple/5 to-bright-pink/5 rounded-2xl border-2 border-dashed border-blue-purple/30 hover:border-bright-pink/50 transition-all hover:shadow-xl flex items-center justify-center min-h-[400px]"
-        >
+        <div @click="showAddModal = true"
+          class="group cursor-pointer bg-linear-to-br from-blue-purple/5 to-bright-pink/5 rounded-2xl border-2 border-dashed border-blue-purple/30 hover:border-bright-pink/50 transition-all hover:shadow-xl flex items-center justify-center min-h-[400px]">
           <div class="text-center p-8">
-            <div class="w-20 h-20 mx-auto bg-blue-purple/10 group-hover:bg-bright-pink/10 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-110">
-              <svg class="w-10 h-10 text-blue-purple group-hover:text-bright-pink transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div
+              class="w-20 h-20 mx-auto bg-blue-purple/10 group-hover:bg-bright-pink/10 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-110">
+              <svg class="w-10 h-10 text-blue-purple group-hover:text-bright-pink transition-colors" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
               </svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-purple transition-colors">Add New Project</h3>
+            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-purple transition-colors">Add New Project
+            </h3>
             <p class="text-sm text-gray-500 mt-2">Click to create a project</p>
           </div>
         </div>
 
         <!-- Project Cards -->
-        <div
-          v-for="project in displayedProjects"
-          :key="project.id"
-          class="bg-portfolio-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100"
-        >
+        <div v-for="project in displayedProjects" :key="project.id"
+          class="bg-portfolio-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100">
           <!-- Project Image -->
           <div class="relative aspect-4/3 bg-gray-100">
-            <img
-              v-if="project.image_url"
-              :src="project.image_url"
-              :alt="project.title"
-              class="w-full h-full object-cover"
-            />
+            <img v-if="project.image_url" :src="project.image_url" :alt="project.title"
+              class="w-full h-full object-cover" />
             <div v-else class="w-full h-full flex items-center justify-center">
               <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
@@ -69,34 +65,25 @@
 
             <!-- Tags -->
             <div v-if="project.tags && project.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
-              <span
-                v-for="(tag, index) in project.tags"
-                :key="index"
-                :class="['px-3 py-1 text-xs rounded-full font-medium', tag.class || 'bg-blue-purple/10 text-blue-purple']"
-              >
+              <span v-for="(tag, index) in project.tags" :key="index"
+                :class="['px-3 py-1 text-xs rounded-full font-medium', tag.class || 'bg-blue-purple/10 text-blue-purple']">
                 {{ tag.label }}
               </span>
             </div>
 
             <!-- Actions -->
             <div class="flex flex-col gap-2">
-              <NuxtLink
-                :to="`/admin/project-content/${project.id}`"
-                class="px-4 py-2 bg-blue-purple/10 text-blue-purple rounded-lg text-sm font-medium hover:bg-blue-purple/20 transition-all text-center"
-              >
+              <NuxtLink :to="`/admin/project-content/${project.id}`"
+                class="px-4 py-2 bg-blue-purple/10 text-blue-purple rounded-lg text-sm font-medium hover:bg-blue-purple/20 transition-all text-center">
                 Edit Content
               </NuxtLink>
               <div class="flex gap-2">
-                <button
-                  @click="editProject(project)"
-                  class="flex-1 px-4 py-2 bg-light-blue/10 text-light-blue rounded-lg text-sm font-medium hover:bg-light-blue/20 transition-all"
-                >
+                <button @click="editProject(project)"
+                  class="flex-1 px-4 py-2 bg-light-blue/10 text-light-blue rounded-lg text-sm font-medium hover:bg-light-blue/20 transition-all">
                   Edit Info
                 </button>
-                <button
-                  @click="deleteProject(project.id)"
-                  class="flex-1 px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all"
-                >
+                <button @click="deleteProject(project.id)"
+                  class="flex-1 px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all">
                   Delete
                 </button>
               </div>
@@ -106,22 +93,19 @@
       </div>
 
       <!-- Show More Button -->
-      <div v-if="!loading && projects.length > itemsToShow && displayedProjects.length < projects.length" class="text-center mt-8">
-        <button
-          @click="showMore"
-          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl"
-        >
+      <div v-if="!loading && projects.length > itemsToShow && displayedProjects.length < projects.length"
+        class="text-center mt-8">
+        <button @click="showMore"
+          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl">
           Show More ({{ projects.length - displayedProjects.length }} remaining)
         </button>
       </div>
     </main>
 
     <!-- Add/Edit Modal -->
-    <div
-      v-if="showAddModal"
+    <div v-if="showAddModal"
       class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6"
-      @click.self="closeModal"
-    >
+      @click.self="closeModal">
       <div class="bg-portfolio-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-8">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">
@@ -132,43 +116,27 @@
             <!-- Title -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
-              <input
-                v-model="formData.title"
-                type="text"
-                required
+              <input v-model="formData.title" type="text" required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Brand Identity Design"
-              />
+                placeholder="Brand Identity Design" />
             </div>
 
             <!-- Description -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                v-model="formData.description"
-                required
-                rows="3"
+              <textarea v-model="formData.description" required rows="3"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Brief description for project cards"
-              ></textarea>
+                placeholder="Brief description for project cards"></textarea>
             </div>
 
             <!-- Image Upload -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Project Image</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-purple transition-colors">
-                <input
-                  ref="fileInput"
-                  type="file"
-                  accept="image/*"
-                  @change="handleFileUpload"
-                  class="hidden"
-                />
-                <button
-                  type="button"
-                  @click="$refs.fileInput.click()"
-                  class="px-6 py-3 bg-light-blue/10 text-light-blue rounded-lg font-medium hover:bg-light-blue/20 transition-all"
-                >
+              <div
+                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-purple transition-colors">
+                <input ref="fileInput" type="file" accept="image/*" @change="handleFileUpload" class="hidden" />
+                <button type="button" @click="$refs.fileInput.click()"
+                  class="px-6 py-3 bg-light-blue/10 text-light-blue rounded-lg font-medium hover:bg-light-blue/20 transition-all">
                   {{ formData.image_url ? 'Change Image' : 'Upload Image' }}
                 </button>
                 <p class="text-sm text-gray-500 mt-2">PNG, JPG up to 5MB</p>
@@ -183,11 +151,8 @@
             <!-- Project Type -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
-              <select
-                v-model="formData.project_type"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              >
+              <select v-model="formData.project_type" required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent">
                 <option value="">Select a project type</option>
                 <option value="branding">Branding & Identity</option>
                 <option value="print">Print Design</option>
@@ -203,18 +168,12 @@
 
             <!-- Actions -->
             <div class="flex gap-4">
-              <button
-                type="button"
-                @click="closeModal"
-                class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all"
-              >
+              <button type="button" @click="closeModal"
+                class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all">
                 Cancel
               </button>
-              <button
-                type="submit"
-                :disabled="uploading"
-                class="flex-1 px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50"
-              >
+              <button type="submit" :disabled="uploading"
+                class="flex-1 px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50">
                 {{ uploading ? 'Uploading...' : (editingProject ? 'Update' : 'Create') }} Project
               </button>
             </div>
@@ -223,9 +182,16 @@
       </div>
     </div>
   </div>
+
+  <!-- Confirm Dialog -->
+  <ConfirmDialog :show="confirmDialog.showDialog.value" :message="confirmDialog.message.value"
+    @confirm="confirmDialog.handleConfirm()" @cancel="confirmDialog.handleCancel()" />
 </template>
 
 <script setup>
+import ConfirmDialog from '~/components/ConfirmDialog.vue'
+import { useConfirm } from '~/composables/useConfirm'
+
 definePageMeta({
   middleware: 'admin',
   layout: false
@@ -233,6 +199,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const toast = useToast()
+const confirmDialog = useConfirm()
 
 // State
 const projects = ref([])
@@ -415,7 +382,8 @@ const editProject = (project) => {
 
 // Delete project
 const deleteProject = async (id) => {
-  if (!confirm('Are you sure you want to delete this project?')) return
+  const confirmed = await confirmDialog.confirm('This project and all its content will be permanently deleted.')
+  if (!confirmed) return
 
   try {
     const { error } = await supabase

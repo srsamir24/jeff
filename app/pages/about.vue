@@ -16,8 +16,13 @@
           <!-- Image -->
           <div class="flex-1 flex justify-center lg:justify-start">
             <div class="relative w-full max-w-md">
-              <div class="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
-                <div
+              <div class="relative aspect-square rounded-3xl overflow-hidden shadow-2xl bg-white">
+                <!-- Dynamic Image -->
+                <img v-if="aboutContent.hero.image" :src="aboutContent.hero.image" alt="Anna Ericyan"
+                  class="w-full h-full object-cover" />
+
+                <!-- Placeholder -->
+                <div v-else
                   class="absolute inset-0 bg-linear-to-br from-bright-pink/40 via-blue-purple/40 to-light-green/40 backdrop-blur-sm flex items-center justify-center">
                   <div class="text-center p-8">
                     <div
@@ -48,7 +53,8 @@
               </span>
             </h1>
             <div class="space-y-3 md:space-y-4 text-base md:text-lg text-gray-600 leading-relaxed">
-              <p v-for="(paragraph, index) in aboutContent.hero.paragraphs" :key="index" class="text-sm md:text-base lg:text-lg">
+              <p v-for="(paragraph, index) in aboutContent.hero.paragraphs" :key="index"
+                class="text-sm md:text-base lg:text-lg">
                 {{ paragraph }}
               </p>
             </div>
@@ -72,19 +78,17 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-          <div
-            v-for="(skill, index) in aboutContent.skills.items"
-            :key="index"
-            :class="['group bg-portfolio-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-md hover:shadow-2xl transition-all border border-gray-100', getSkillHoverBorder(index)]"
-          >
+          <div v-for="(skill, index) in aboutContent.skills.items" :key="index"
+            :class="['group bg-portfolio-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-md hover:shadow-2xl transition-all border border-gray-100', getSkillHoverBorder(index)]">
             <div
-              :class="['w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform', getSkillBgClass(index)]"
-            >
-              <svg class="w-6 h-6 md:w-8 md:h-8 text-portfolio-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              :class="['w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform', getSkillBgClass(index)]">
+              <svg class="w-6 h-6 md:w-8 md:h-8 text-portfolio-white" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getSkillIcon(index)" />
               </svg>
             </div>
-            <h3 :class="['text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2 transition-colors', getSkillTextClass(index)]">
+            <h3
+              :class="['text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2 transition-colors', getSkillTextClass(index)]">
               {{ skill.title }}
             </h3>
             <p class="text-sm md:text-base text-gray-600 leading-snug">{{ skill.description }}</p>
@@ -106,17 +110,18 @@
         </div>
 
         <div class="max-w-3xl mx-auto space-y-4 md:space-y-6 lg:space-y-8">
-          <div v-for="(item, index) in aboutContent.experience.items" :key="index" class="flex gap-3 md:gap-4 lg:gap-6 group">
+          <div v-for="(item, index) in aboutContent.experience.items" :key="index"
+            class="flex gap-3 md:gap-4 lg:gap-6 group">
             <div class="flex-shrink-0">
               <div
-                :class="['w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform', getExperienceBgClass(index)]"
-              >
+                :class="['w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform', getExperienceBgClass(index)]">
                 <span class="text-portfolio-white font-bold text-sm md:text-base">{{ index + 1 }}</span>
               </div>
             </div>
             <div class="flex-1 bg-gray-50 rounded-xl md:rounded-2xl p-4 md:p-6 hover:shadow-lg transition-all">
               <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">{{ item.title }}</h3>
-              <p :class="['text-sm md:text-base font-semibold mb-2', getExperienceTextClass(index)]">{{ item.period }}</p>
+              <p :class="['text-sm md:text-base font-semibold mb-2', getExperienceTextClass(index)]">{{ item.period }}
+              </p>
               <p class="text-sm md:text-base text-gray-600 leading-snug">{{ item.description }}</p>
             </div>
           </div>
@@ -161,6 +166,7 @@ useHead({
 // Default content
 const aboutContent = ref({
   hero: {
+    image: '',
     paragraphs: [
       "Hi! I'm Anna Ericyan, a passionate graphic designer with a love for creating visual stories that captivate and inspire.",
       "With years of experience in branding, print design, and digital illustration, I help businesses and individuals bring their creative visions to life through thoughtful, beautiful design.",

@@ -7,16 +7,14 @@
           <div class="flex items-center space-x-4">
             <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
               </svg>
             </NuxtLink>
             <h1 class="text-2xl font-bold text-gray-900">Manage About Page</h1>
           </div>
-          <button
-            @click="saveAllContent"
-            :disabled="saving"
-            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50"
-          >
+          <button @click="saveAllContent" :disabled="saving"
+            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50">
             {{ saving ? 'Saving...' : 'Save All Changes' }}
           </button>
         </div>
@@ -36,36 +34,59 @@
         <!-- Hero Section -->
         <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
           <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-bright-pink/10 text-bright-pink rounded-lg flex items-center justify-center text-sm font-bold">1</span>
+            <span
+              class="w-8 h-8 bg-bright-pink/10 text-bright-pink rounded-lg flex items-center justify-center text-sm font-bold">1</span>
             Hero Section
           </h2>
 
           <div class="space-y-6">
+            <!-- Profile Image -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
+              <div class="flex items-center gap-6">
+                <div class="relative w-32 h-32 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-200">
+                  <img v-if="aboutContent.hero.image" :src="aboutContent.hero.image"
+                    class="w-full h-full object-cover" />
+                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <!-- Loading Overlay -->
+                  <div v-if="uploadingImage" class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  </div>
+                </div>
+                <div>
+                  <button @click="$refs.fileInput.click()" :disabled="uploadingImage"
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all mb-2">
+                    {{ aboutContent.hero.image ? 'Change Photo' : 'Upload Photo' }}
+                  </button>
+                  <p class="text-xs text-gray-500">Recommended: Square image, at least 400x400px</p>
+                  <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleImageUpload">
+                </div>
+              </div>
+            </div>
+
             <!-- Bio Paragraphs -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">About Me Paragraphs</label>
               <div class="space-y-4">
                 <div v-for="(paragraph, index) in aboutContent.hero.paragraphs" :key="index" class="relative">
-                  <textarea
-                    v-model="aboutContent.hero.paragraphs[index]"
-                    rows="3"
+                  <textarea v-model="aboutContent.hero.paragraphs[index]" rows="3"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    :placeholder="`Paragraph ${index + 1}`"
-                  ></textarea>
-                  <button
-                    v-if="aboutContent.hero.paragraphs.length > 1"
-                    @click="removeParagraph(index)"
-                    class="absolute top-2 right-2 p-2 text-bright-pink hover:bg-bright-pink/10 rounded-lg transition-all"
-                  >
+                    :placeholder="`Paragraph ${index + 1}`"></textarea>
+                  <button v-if="aboutContent.hero.paragraphs.length > 1" @click="removeParagraph(index)"
+                    class="absolute top-2 right-2 p-2 text-bright-pink hover:bg-bright-pink/10 rounded-lg transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                      </path>
                     </svg>
                   </button>
                 </div>
-                <button
-                  @click="addParagraph"
-                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all"
-                >
+                <button @click="addParagraph"
+                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
                   + Add Paragraph
                 </button>
               </div>
@@ -76,7 +97,8 @@
         <!-- Skills Section -->
         <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
           <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-light-blue/10 text-light-blue rounded-lg flex items-center justify-center text-sm font-bold">2</span>
+            <span
+              class="w-8 h-8 bg-light-blue/10 text-light-blue rounded-lg flex items-center justify-center text-sm font-bold">2</span>
             Skills Section
           </h2>
 
@@ -85,21 +107,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
-                <input
-                  v-model="aboutContent.skills.title"
-                  type="text"
+                <input v-model="aboutContent.skills.title" type="text"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="What I Do"
-                />
+                  placeholder="What I Do" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
-                <input
-                  v-model="aboutContent.skills.description"
-                  type="text"
+                <input v-model="aboutContent.skills.description" type="text"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="Specialized skills and services..."
-                />
+                  placeholder="Specialized skills and services..." />
               </div>
             </div>
 
@@ -107,39 +123,24 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-4">Skills</label>
               <div class="space-y-4">
-                <div
-                  v-for="(skill, index) in aboutContent.skills.items"
-                  :key="index"
-                  class="border border-gray-200 rounded-xl p-4"
-                >
+                <div v-for="(skill, index) in aboutContent.skills.items" :key="index"
+                  class="border border-gray-200 rounded-xl p-4">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      v-model="skill.title"
-                      type="text"
-                      placeholder="Skill Title"
-                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    />
-                    <input
-                      v-model="skill.description"
-                      type="text"
-                      placeholder="Skill Description"
-                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    />
+                    <input v-model="skill.title" type="text" placeholder="Skill Title"
+                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
+                    <input v-model="skill.description" type="text" placeholder="Skill Description"
+                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
                   </div>
                   <div class="flex justify-end mt-2">
-                    <button
-                      @click="removeSkill(index)"
-                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all"
-                    >
+                    <button @click="removeSkill(index)"
+                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all">
                       Remove
                     </button>
                   </div>
                 </div>
               </div>
-              <button
-                @click="addSkill"
-                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all"
-              >
+              <button @click="addSkill"
+                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
                 + Add Skill
               </button>
             </div>
@@ -149,7 +150,8 @@
         <!-- Experience Section -->
         <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
           <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-light-green/10 text-light-green rounded-lg flex items-center justify-center text-sm font-bold">3</span>
+            <span
+              class="w-8 h-8 bg-light-green/10 text-light-green rounded-lg flex items-center justify-center text-sm font-bold">3</span>
             Experience Timeline
           </h2>
 
@@ -158,21 +160,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
-                <input
-                  v-model="aboutContent.experience.title"
-                  type="text"
+                <input v-model="aboutContent.experience.title" type="text"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="Experience"
-                />
+                  placeholder="Experience" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
-                <input
-                  v-model="aboutContent.experience.description"
-                  type="text"
+                <input v-model="aboutContent.experience.description" type="text"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="My journey in design"
-                />
+                  placeholder="My journey in design" />
               </div>
             </div>
 
@@ -180,47 +176,28 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-4">Experience Items</label>
               <div class="space-y-4">
-                <div
-                  v-for="(item, index) in aboutContent.experience.items"
-                  :key="index"
-                  class="border border-gray-200 rounded-xl p-4"
-                >
+                <div v-for="(item, index) in aboutContent.experience.items" :key="index"
+                  class="border border-gray-200 rounded-xl p-4">
                   <div class="space-y-3">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        v-model="item.title"
-                        type="text"
-                        placeholder="Job Title"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                      />
-                      <input
-                        v-model="item.period"
-                        type="text"
-                        placeholder="Time Period (e.g., 2020 - Present)"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                      />
+                      <input v-model="item.title" type="text" placeholder="Job Title"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
+                      <input v-model="item.period" type="text" placeholder="Time Period (e.g., 2020 - Present)"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
                     </div>
-                    <textarea
-                      v-model="item.description"
-                      rows="2"
-                      placeholder="Job Description"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    ></textarea>
+                    <textarea v-model="item.description" rows="2" placeholder="Job Description"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"></textarea>
                   </div>
                   <div class="flex justify-end mt-2">
-                    <button
-                      @click="removeExperience(index)"
-                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all"
-                    >
+                    <button @click="removeExperience(index)"
+                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all">
                       Remove
                     </button>
                   </div>
                 </div>
               </div>
-              <button
-                @click="addExperience"
-                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all"
-              >
+              <button @click="addExperience"
+                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
                 + Add Experience
               </button>
             </div>
@@ -230,28 +207,23 @@
         <!-- CTA Section -->
         <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
           <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-blue-purple/10 text-blue-purple rounded-lg flex items-center justify-center text-sm font-bold">4</span>
+            <span
+              class="w-8 h-8 bg-blue-purple/10 text-blue-purple rounded-lg flex items-center justify-center text-sm font-bold">4</span>
             Call to Action Section
           </h2>
 
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-              <input
-                v-model="aboutContent.cta.title"
-                type="text"
+              <input v-model="aboutContent.cta.title" type="text"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Let's Create Together"
-              />
+                placeholder="Let's Create Together" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-              <textarea
-                v-model="aboutContent.cta.subtitle"
-                rows="2"
+              <textarea v-model="aboutContent.cta.subtitle" rows="2"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="I'm always excited to work on new projects..."
-              ></textarea>
+                placeholder="I'm always excited to work on new projects..."></textarea>
             </div>
           </div>
         </div>
@@ -259,11 +231,8 @@
 
       <!-- Save Button (Bottom) -->
       <div class="mt-8 text-center">
-        <button
-          @click="saveAllContent"
-          :disabled="saving"
-          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-        >
+        <button @click="saveAllContent" :disabled="saving"
+          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl disabled:opacity-50">
           {{ saving ? 'Saving...' : 'Save All Changes' }}
         </button>
       </div>
@@ -282,9 +251,11 @@ const supabase = useSupabaseClient()
 // State
 const loading = ref(true)
 const saving = ref(false)
+const uploadingImage = ref(false)
 
 const aboutContent = ref({
   hero: {
+    image: '',
     paragraphs: [
       "Hi! I'm Anna Ericyan, a passionate graphic designer with a love for creating visual stories that captivate and inspire.",
       "With years of experience in branding, print design, and digital illustration, I help businesses and individuals bring their creative visions to life through thoughtful, beautiful design.",
@@ -429,6 +400,33 @@ const addExperience = () => {
 
 const removeExperience = (index) => {
   aboutContent.value.experience.items.splice(index, 1)
+}
+
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+
+  uploadingImage.value = true
+  try {
+    const fileName = `about-${Date.now()}-${file.name}`
+    const { data, error } = await supabase.storage
+      .from('projects')
+      .upload(fileName, file)
+
+    if (error) throw error
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('projects')
+      .getPublicUrl(fileName)
+
+    aboutContent.value.hero.image = publicUrl
+  } catch (error) {
+    console.error('Error uploading image:', error)
+    alert('Failed to upload image. Please try again.')
+  } finally {
+    uploadingImage.value = false
+    e.target.value = '' // Reset input
+  }
 }
 
 // Load content on mount

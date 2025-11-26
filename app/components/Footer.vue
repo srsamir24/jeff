@@ -134,7 +134,7 @@
             &copy; {{ new Date().getFullYear() }} Anna Ericyan. All rights reserved.
           </p>
           <div class="flex items-center space-x-6 text-sm text-light-blue/70">
-            <span>Made with ❤️ by Anna Ericyan</span>
+            <span>Made by Zellap.com</span>
           </div>
         </div>
       </div>

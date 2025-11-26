@@ -1,5 +1,27 @@
 @import 'tailwindcss';
 
+/* Force light mode - override device dark mode */
+html {
+  color-scheme: light only;
+}
+
+body {
+  background-color: #fcfcfc;
+  color: #1f2937;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: #fcfcfc !important;
+    color: #1f2937 !important;
+  }
+
+  * {
+    color-scheme: light only !important;
+  }
+}
+
 @font-face {
   font-family: 'Gendy';
   src: url('~/assets/font/Gendy.woff2') format('woff2'),

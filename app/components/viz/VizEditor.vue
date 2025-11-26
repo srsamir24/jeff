@@ -32,8 +32,7 @@
                     <span class="text-sm text-gray-500">{{ blocks.length }} blocks</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button @click="previewMode = !previewMode"
-                        class="px-3 py-1.5 text-sm rounded-lg transition-colors"
+                    <button @click="previewMode = !previewMode" class="px-3 py-1.5 text-sm rounded-lg transition-colors"
                         :class="previewMode ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
                         {{ previewMode ? 'Exit Preview' : 'Preview' }}
                     </button>
@@ -79,8 +78,8 @@
                                             d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
-                                <button @click.stop="duplicateBlock(index)"
-                                    class="p-1.5 rounded hover:bg-gray-100" title="Duplicate">
+                                <button @click.stop="duplicateBlock(index)" class="p-1.5 rounded hover:bg-gray-100"
+                                    title="Duplicate">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -98,7 +97,8 @@
 
                             <!-- Block Component -->
                             <component :is="blockComponents[block.type]" :content="block.props"
-                                :is-editor="!previewMode" @update="(newProps: Record<string, any>) => updateBlockProps(index, newProps)"
+                                :is-editor="!previewMode"
+                                @update="(newProps: Record<string, any>) => updateBlockProps(index, newProps)"
                                 @upload="triggerUpload(block.id)" />
                         </div>
                     </div>
@@ -110,177 +110,202 @@
         <div class="w-80 bg-white border-l border-gray-200 flex flex-col" v-if="selectedBlock && !previewMode">
             <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Style</h2>
-                <span
-                    class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600 capitalize">{{ selectedBlock.type }}</span>
+                <span class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600 capitalize">{{ selectedBlock.type
+                }}</span>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 space-y-6">
+            <div class="flex-1 overflow-y-auto p-4 space-y-2">
                 <!-- Typography Section -->
-                <div class="space-y-4">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Typography</h3>
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button @click="expandedSections.typography = !expandedSections.typography"
+                        class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                        <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Typography</h3>
+                        <svg class="w-4 h-4 text-gray-500 transition-transform"
+                            :class="{ 'rotate-180': expandedSections.typography }" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                    <!-- Font Size -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
-                        <div class="grid grid-cols-5 gap-1">
-                            <button v-for="size in fontSizes" :key="size.value" @click="updateStyle('fontSize', size.value)"
-                                class="px-2 py-1.5 text-xs rounded border transition-colors"
-                                :class="selectedBlock.props.fontSize === size.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
-                                {{ size.label }}
-                            </button>
+                    <div v-show="expandedSections.typography" class="p-4 space-y-4">
+
+                        <!-- Font Size -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+                            <div class="grid grid-cols-5 gap-1">
+                                <button v-for="size in fontSizes" :key="size.value"
+                                    @click="updateStyle('fontSize', size.value)"
+                                    class="px-2 py-1.5 text-xs rounded border transition-colors"
+                                    :class="selectedBlock.props.fontSize === size.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                    {{ size.label }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Text Align -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Text Align</label>
-                        <div class="grid grid-cols-4 gap-1">
-                            <button v-for="align in textAligns" :key="align.value"
-                                @click="updateStyle('textAlign', align.value)"
-                                class="p-2 rounded border transition-colors flex items-center justify-center"
-                                :class="selectedBlock.props.textAlign === align.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" v-html="align.icon"></svg>
-                            </button>
+                        <!-- Text Align -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Text Align</label>
+                            <div class="grid grid-cols-4 gap-1">
+                                <button v-for="align in textAligns" :key="align.value"
+                                    @click="updateStyle('textAlign', align.value)"
+                                    class="p-2 rounded border transition-colors flex items-center justify-center"
+                                    :class="selectedBlock.props.textAlign === align.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"
+                                        v-html="align.icon"></svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Text Color -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
-                        <div class="flex flex-wrap gap-2">
-                            <button v-for="color in textColors" :key="color.value"
-                                @click="updateStyle('textColor', color.value)"
-                                class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
-                                :class="[color.class, selectedBlock.props.textColor === color.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']"
-                                :title="color.label">
-                            </button>
+                        <!-- Text Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button v-for="color in textColors" :key="color.value"
+                                    @click="updateStyle('textColor', color.value)"
+                                    class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
+                                    :class="[color.class, selectedBlock.props.textColor === color.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']"
+                                    :title="color.label">
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Background Section -->
-                <div class="space-y-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Background</h3>
-
-                    <!-- Background Color -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
-                        <div class="flex flex-wrap gap-2">
-                            <button v-for="color in bgColors" :key="color.value"
-                                @click="updateStyle('bgColor', color.value)"
-                                class="w-8 h-8 rounded-lg border-2 transition-transform hover:scale-110"
-                                :class="[color.class, selectedBlock.props.bgColor === color.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']"
-                                :title="color.label">
-                            </button>
+                        <!-- Gradient Text Toggle -->
+                        <div>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="text-sm font-medium text-gray-700">Gradient Text</span>
+                                <button @click="updateStyle('gradientText', !selectedBlock.props.gradientText)"
+                                    class="relative w-11 h-6 rounded-full transition-colors"
+                                    :class="selectedBlock.props.gradientText ? 'bg-blue-500' : 'bg-gray-300'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                                        :class="{ 'translate-x-5': selectedBlock.props.gradientText }"></span>
+                                </button>
+                            </label>
                         </div>
-                    </div>
 
-                    <!-- Gradient Toggle -->
-                    <div>
-                        <label class="flex items-center justify-between cursor-pointer">
-                            <span class="text-sm font-medium text-gray-700">Enable Gradient</span>
-                            <button @click="updateStyle('bgGradientEnabled', !selectedBlock.props.bgGradientEnabled)"
-                                class="relative w-11 h-6 rounded-full transition-colors"
-                                :class="selectedBlock.props.bgGradientEnabled ? 'bg-blue-500' : 'bg-gray-300'">
-                                <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
-                                    :class="{ 'translate-x-5': selectedBlock.props.bgGradientEnabled }"></span>
-                            </button>
-                        </label>
-                    </div>
-
-                    <!-- Gradient Presets -->
-                    <div v-if="selectedBlock.props.bgGradientEnabled" class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">Gradient Preset</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button v-for="gradient in gradientPresets" :key="gradient.value"
-                                @click="updateStyle('bgGradient', gradient.value)"
-                                class="h-12 rounded-lg border-2 transition-transform hover:scale-105"
-                                :class="[gradient.class, selectedBlock.props.bgGradient === gradient.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-transparent']"
-                                :title="gradient.label">
-                            </button>
+                        <!-- Gradient Presets for Text -->
+                        <div v-if="selectedBlock.props.gradientText" class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Text Gradient</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button v-for="gradient in textGradients" :key="gradient.value"
+                                    @click="updateStyle('gradient', gradient.value)"
+                                    class="h-10 rounded-lg border-2 transition-transform hover:scale-105 flex items-center justify-center text-xs font-medium"
+                                    :class="[gradient.class, selectedBlock.props.gradient === gradient.value ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200']">
+                                    <span class="text-transparent bg-clip-text" :class="gradient.class">{{
+                                        gradient.label
+                                        }}</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Animation Section -->
-                <div class="space-y-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Animation</h3>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Effect</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button v-for="anim in animations" :key="anim.value"
-                                @click="updateStyle('animation', anim.value)"
-                                class="px-3 py-2 text-sm rounded-lg border transition-colors"
-                                :class="selectedBlock.props.animation === anim.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
-                                {{ anim.label }}
-                            </button>
+                        <!-- Font Weight -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Font Weight</label>
+                            <div class="grid grid-cols-4 gap-1">
+                                <button v-for="weight in fontWeights" :key="weight.value"
+                                    @click="updateStyle('fontWeight', weight.value)"
+                                    class="px-2 py-1.5 text-xs rounded border transition-colors"
+                                    :class="selectedBlock.props.fontWeight === weight.value ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
+                                    {{ weight.label }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Decorations Section -->
-                <div class="space-y-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Text Decorations</h3>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button v-for="dec in decorations" :key="dec.value" @click="toggleDecoration(dec.value)"
-                            class="px-3 py-2 text-sm rounded-lg border transition-colors"
-                            :class="(selectedBlock.props.decorations || []).includes(dec.value) ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'">
-                            <span :class="dec.class">{{ dec.label }}</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Block-Specific Options -->
-                <div v-if="selectedBlock.type === 'split'" class="space-y-4 pt-4 border-t border-gray-200">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Layout</h3>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Heading Tag</label>
-                        <select :value="selectedBlock.props.headingTag || 'h3'"
-                            @change="updateStyle('headingTag', ($event.target as HTMLSelectElement).value)"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="h1">H1 - Main Title</option>
-                            <option value="h2">H2 - Section</option>
-                            <option value="h3">H3 - Subsection</option>
-                            <option value="h4">H4 - Small</option>
-                            <option value="p">Paragraph</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="flex items-center justify-between cursor-pointer">
-                            <span class="text-sm font-medium text-gray-700">Reverse Layout</span>
-                            <button @click="updateStyle('reverse', !selectedBlock.props.reverse)"
-                                class="relative w-11 h-6 rounded-full transition-colors"
-                                :class="selectedBlock.props.reverse ? 'bg-blue-500' : 'bg-gray-300'">
-                                <span
-                                    class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
-                                    :class="{ 'translate-x-5': selectedBlock.props.reverse }"></span>
-                            </button>
-                        </label>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Empty State for Right Panel -->
-        <div v-else-if="!previewMode" class="w-80 bg-white border-l border-gray-200 flex flex-col items-center justify-center text-gray-400 p-6">
-            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-            <p class="text-sm font-medium text-center">Select a block to edit its style</p>
-        </div>
+            <!-- Spacing Section -->
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button @click="expandedSections.spacing = !expandedSections.spacing"
+                    class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                    <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Spacing</h3>
+                    <svg class="w-4 h-4 text-gray-500 transition-transform"
+                        :class="{ 'rotate-180': expandedSections.spacing }" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
 
-        <!-- Hidden file input for image uploads -->
-        <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
-    </div>
+                <div v-show="expandedSections.spacing" class="p-4 space-y-4">
+
+                    <!-- Padding -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Padding</label>
+                        <div class="grid grid-cols-5 gap-1">
+                            <button v-for="pad in paddings" :key="pad.value" @click="updateStyle('padding', pad.value)"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="h1">H1 - Main Title</option>
+                                <option value="h2">H2 - Section</option>
+                                <option value="h3">H3 - Subsection</option>
+                                <option value="h4">H4 - Small</option>
+                                <option value="p">Paragraph</option>
+                                <option value="div">Div (No semantic)</option>
+                                </select>
+                        </div>
+                    </div>
+
+                    <!-- Block-Specific Options -->
+                    <div v-if="selectedBlock.type === 'split'"
+                        class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button @click="expandedSections.layoutOptions = !expandedSections.layoutOptions"
+                            class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors">
+                            <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Layout</h3>
+                            <svg class="w-4 h-4 text-gray-500 transition-transform"
+                                :class="{ 'rotate-180': expandedSections.layoutOptions }" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div v-show="expandedSections.layoutOptions" class="p-4 space-y-4">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Heading Tag</label>
+                                <select :value="selectedBlock.props.headingTag || 'h3'"
+                                    @change="updateStyle('headingTag', ($event.target as HTMLSelectElement).value)"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="h1">H1 - Main Title</option>
+                                    <option value="h2">H2 - Section</option>
+                                    <option value="h3">H3 - Subsection</option>
+                                    <option value="h4">H4 - Small</option>
+                                    <option value="p">Paragraph</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center justify-between cursor-pointer">
+                                    <span class="text-sm font-medium text-gray-700">Reverse Layout</span>
+                                    <button @click="updateStyle('reverse', !selectedBlock.props.reverse)"
+                                        class="relative w-11 h-6 rounded-full transition-colors"
+                                        :class="selectedBlock.props.reverse ? 'bg-blue-500' : 'bg-gray-300'">
+                                        <span
+                                            class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+                                            :class="{ 'translate-x-5': selectedBlock.props.reverse }"></span>
+                                    </button>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State for Right Panel -->
+                <div v-else-if="!previewMode"
+                    class="w-80 bg-white border-l border-gray-200 flex flex-col items-center justify-center text-gray-400 p-6">
+                    <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                    </svg>
+                    <p class="text-sm font-medium text-center">Select a block to edit its style</p>
+                </div>
+
+                <!-- Hidden file input for image uploads -->
+                <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
+            </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import VizTextBlock from './blocks/VizTextBlock.vue'
 import VizHeroBlock from './blocks/VizHeroBlock.vue'
 import VizSplitBlock from './blocks/VizSplitBlock.vue'
@@ -290,15 +315,34 @@ import VizQuoteBlock from './blocks/VizQuoteBlock.vue'
 import VizVideoBlock from './blocks/VizVideoBlock.vue'
 
 const props = defineProps({
+    modelValue: { type: Array, default: () => [] },
     initialBlocks: { type: Array, default: () => [] }
 })
-const emit = defineEmits(['update:blocks'])
+const emit = defineEmits(['update:modelValue', 'update:blocks'])
 
-const blocks = ref([...(props.initialBlocks as any[])])
+const blocks = ref([...(props.modelValue as any[] || props.initialBlocks as any[])])
 const selectedBlockIndex = ref<number | null>(null)
 const previewMode = ref(false)
 const isDragging = ref(false)
 const draggedPreset = ref<any>(null)
+
+// Collapsible sections state
+const expandedSections = ref({
+    typography: true,
+    spacing: false,
+    background: false,
+    animation: false,
+    decorations: false,
+    textOptions: false,
+    layoutOptions: false
+})
+
+// Watch for changes to modelValue and sync blocks
+watch(() => props.modelValue, (newValue) => {
+    if (newValue && Array.isArray(newValue)) {
+        blocks.value = [...newValue]
+    }
+}, { deep: true, immediate: true })
 
 const blockComponents: Record<string, any> = {
     text: VizTextBlock,
@@ -340,36 +384,35 @@ const textAligns = [
 const textColors = [
     { value: '', label: 'Default', class: 'bg-gray-800' },
     { value: 'gray-500', label: 'Gray', class: 'bg-gray-500' },
-    { value: 'red-500', label: 'Red', class: 'bg-red-500' },
-    { value: 'orange-500', label: 'Orange', class: 'bg-orange-500' },
-    { value: 'yellow-500', label: 'Yellow', class: 'bg-yellow-500' },
-    { value: 'green-500', label: 'Green', class: 'bg-green-500' },
-    { value: 'blue-500', label: 'Blue', class: 'bg-blue-500' },
-    { value: 'purple-500', label: 'Purple', class: 'bg-purple-500' },
-    { value: 'pink-500', label: 'Pink', class: 'bg-pink-500' }
+    { value: 'light-green', label: 'Light Green', class: 'bg-light-green' },
+    { value: 'bright-pink', label: 'Bright Pink', class: 'bg-bright-pink' },
+    { value: 'lighter-pink', label: 'Lighter Pink', class: 'bg-lighter-pink' },
+    { value: 'light-blue', label: 'Light Blue', class: 'bg-light-blue' },
+    { value: 'blue-purple', label: 'Blue Purple', class: 'bg-blue-purple' },
+    { value: 'white', label: 'White', class: 'bg-white border-2 border-gray-300' }
 ]
 
 const bgColors = [
     { value: '', label: 'None', class: 'bg-white border-dashed' },
     { value: 'gray-50', label: 'Light Gray', class: 'bg-gray-50' },
     { value: 'gray-100', label: 'Gray', class: 'bg-gray-100' },
-    { value: 'blue-50', label: 'Light Blue', class: 'bg-blue-50' },
-    { value: 'green-50', label: 'Light Green', class: 'bg-green-50' },
-    { value: 'purple-50', label: 'Light Purple', class: 'bg-purple-50' },
-    { value: 'pink-50', label: 'Light Pink', class: 'bg-pink-50' },
-    { value: 'yellow-50', label: 'Light Yellow', class: 'bg-yellow-50' }
+    { value: 'portfolio-white', label: 'Portfolio White', class: 'bg-portfolio-white' },
+    { value: 'light-green/10', label: 'Light Green Tint', class: 'bg-light-green/10' },
+    { value: 'bright-pink/10', label: 'Pink Tint', class: 'bg-bright-pink/10' },
+    { value: 'light-blue/10', label: 'Blue Tint', class: 'bg-light-blue/10' },
+    { value: 'blue-purple/10', label: 'Purple Tint', class: 'bg-blue-purple/10' }
 ]
 
 const gradientPresets = [
-    { value: 'purple-blue', label: 'Purple Blue', class: 'bg-gradient-to-br from-purple-600 to-blue-500' },
-    { value: 'pink-orange', label: 'Pink Orange', class: 'bg-gradient-to-br from-pink-500 to-orange-400' },
-    { value: 'green-blue', label: 'Green Blue', class: 'bg-gradient-to-br from-green-500 to-blue-400' },
-    { value: 'sunset-warm', label: 'Sunset', class: 'bg-gradient-to-br from-orange-500 via-red-500 to-pink-600' },
-    { value: 'ocean-breeze', label: 'Ocean', class: 'bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600' },
-    { value: 'forest-mist', label: 'Forest', class: 'bg-gradient-to-br from-green-400 via-teal-500 to-cyan-600' },
-    { value: 'berry-blast', label: 'Berry', class: 'bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600' },
-    { value: 'cosmic-fusion', label: 'Cosmic', class: 'bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400' },
-    { value: 'lavender-sky', label: 'Lavender', class: 'bg-gradient-to-br from-purple-300 via-pink-300 to-blue-200' }
+    { value: 'blue-purple', label: 'Blue Purple', class: 'bg-gradient-to-br from-blue-purple to-blue-purple/80' },
+    { value: 'pink-green', label: 'Pink Green', class: 'bg-gradient-to-br from-bright-pink to-light-green' },
+    { value: 'purple-pink', label: 'Purple Pink', class: 'bg-gradient-to-br from-blue-purple to-bright-pink' },
+    { value: 'green-blue', label: 'Green Blue', class: 'bg-gradient-to-br from-light-green to-light-blue' },
+    { value: 'sunset-warm', label: 'Sunset', class: 'bg-gradient-to-br from-bright-pink via-lighter-pink to-light-blue' },
+    { value: 'ocean-breeze', label: 'Ocean', class: 'bg-gradient-to-br from-light-blue via-blue-purple to-bright-pink' },
+    { value: 'forest-mist', label: 'Forest', class: 'bg-gradient-to-br from-light-green via-light-blue to-blue-purple' },
+    { value: 'berry-blast', label: 'Berry', class: 'bg-gradient-to-br from-lighter-pink via-bright-pink to-blue-purple' },
+    { value: 'cosmic-fusion', label: 'Cosmic', class: 'bg-gradient-to-br from-blue-purple via-bright-pink to-light-green' }
 ]
 
 const animations = [
@@ -386,6 +429,30 @@ const decorations = [
     { value: 'line-through', label: 'Strike', class: 'line-through' },
     { value: 'highlight', label: 'Highlight', class: 'bg-yellow-200 px-1' },
     { value: 'uppercase', label: 'UPPERCASE', class: 'uppercase' }
+]
+
+const textGradients = [
+    { value: 'rainbow', label: 'Rainbow', class: 'bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400' },
+    { value: 'custom', label: 'Custom', class: 'bg-gradient-to-r from-light-green via-bright-pink to-blue-purple' },
+    { value: 'sunset', label: 'Sunset', class: 'bg-gradient-to-r from-bright-pink via-lighter-pink to-light-blue' },
+    { value: 'ocean', label: 'Ocean', class: 'bg-gradient-to-r from-light-blue to-blue-purple' },
+    { value: 'forest', label: 'Forest', class: 'bg-gradient-to-r from-light-green to-light-blue' },
+    { value: 'purple-dream', label: 'Purple', class: 'bg-gradient-to-r from-blue-purple to-bright-pink' }
+]
+
+const fontWeights = [
+    { value: 'normal', label: 'Normal' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'semibold', label: 'Semibold' },
+    { value: 'bold', label: 'Bold' }
+]
+
+const paddings = [
+    { value: '4', label: 'XS' },
+    { value: '8', label: 'S' },
+    { value: '12', label: 'M' },
+    { value: '16', label: 'L' },
+    { value: '20', label: 'XL' }
 ]
 
 // Computed
@@ -524,6 +591,7 @@ const handleFileUpload = async (e: Event) => {
 }
 
 const emitUpdate = () => {
+    emit('update:modelValue', blocks.value)
     emit('update:blocks', blocks.value)
 }
 
@@ -537,21 +605,50 @@ if (typeof document !== 'undefined') {
 
 <style scoped>
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-3rem); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-3rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(3rem); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(3rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.animate-fade-in { animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-.animate-slide-in-left { animation: slideInLeft 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.animate-slide-in-right { animation: slideInRight 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-fade-in {
+    animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 </style>

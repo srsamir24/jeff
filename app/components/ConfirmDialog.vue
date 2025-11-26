@@ -21,8 +21,8 @@
                             Cancel
                         </button>
                         <button @click="$emit('confirm')"
-                            class="flex-1 px-6 py-3 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 transition-all shadow-lg">
-                            Delete
+                            class="flex-1 px-6 py-3 bg-bright-pink text-white rounded-xl font-medium hover:bg-bright-pink/90 transition-all shadow-lg">
+                            Confirm
                         </button>
                     </div>
                 </div>

@@ -12,7 +12,7 @@
                         class="w-full h-auto rounded-xl shadow-lg object-cover" />
                     <div v-if="isEditor"
                         class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
-                        <button @click="$emit('upload')"
+                        <button @click="handleUpload"
                             class="bg-white px-4 py-2 rounded-full font-medium hover:bg-gray-100 shadow-lg">
                             Change Image
                         </button>
@@ -83,9 +83,18 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'delete', 'move-up', 'move-down', 'upload'])
 
+const { pickAndUploadFile } = useSupabaseStorage()
+
 const updateTitle = (e) => emit('update', { ...props.content, title: e.target.innerHTML })
 const updateBody = (e) => emit('update', { ...props.content, body: e.target.innerHTML })
 const toggleReverse = () => emit('update', { ...props.content, reverse: !props.content.reverse })
+
+const handleUpload = async () => {
+    const url = await pickAndUploadFile()
+    if (url) {
+        emit('update', { ...props.content, src: url })
+    }
+}
 
 const getGradientClasses = (gradient) => {
     switch (gradient) {

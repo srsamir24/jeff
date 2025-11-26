@@ -47,9 +47,21 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'delete', 'move-up', 'move-down', 'upload'])
 
-const addImage = () => {
-    const newImages = [...props.content.images, 'https://placehold.co/400x400']
-    emit('update', { ...props.content, images: newImages })
+const { pickAndUploadFile } = useSupabaseStorage()
+
+const addImage = async () => {
+    if (props.isEditor) {
+        // Upload new image to Supabase
+        const url = await pickAndUploadFile()
+        if (url) {
+            const newImages = [...props.content.images, url]
+            emit('update', { ...props.content, images: newImages })
+        }
+    } else {
+        // Fallback for non-editor mode
+        const newImages = [...props.content.images, 'https://placehold.co/400x400']
+        emit('update', { ...props.content, images: newImages })
+    }
 }
 
 const removeImage = (index) => {
@@ -57,4 +69,17 @@ const removeImage = (index) => {
     newImages.splice(index, 1)
     emit('update', { ...props.content, images: newImages })
 }
+
+const handleUpload = async (index) => {
+    // Upload replacement image to Supabase
+    const url = await pickAndUploadFile()
+    if (url) {
+        const newImages = [...props.content.images]
+        newImages[index] = url
+        emit('update', { ...props.content, images: newImages })
+    }
+}
+
+// Expose handleUpload for parent component
+defineExpose({ handleUpload })
 </script>

@@ -6,7 +6,7 @@
 
             <div v-if="isEditor"
                 class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
-                <button @click="$emit('upload')"
+                <button @click="handleUpload"
                     class="bg-white px-6 py-3 rounded-full font-medium hover:bg-gray-100 shadow-lg transform hover:scale-105 transition-all">
                     Change Image
                 </button>
@@ -32,5 +32,14 @@ const props = defineProps({
     isEditor: { type: Boolean, default: false }
 })
 
-defineEmits(['update', 'delete', 'move-up', 'move-down', 'upload'])
+const emit = defineEmits(['update', 'delete', 'move-up', 'move-down', 'upload'])
+
+const { pickAndUploadFile } = useSupabaseStorage()
+
+const handleUpload = async () => {
+    const url = await pickAndUploadFile()
+    if (url) {
+        emit('update', { ...props.content, src: url })
+    }
+}
 </script>

@@ -1,7 +1,7 @@
 <template>
-  <div class="group bg-portfolio-white p-8 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-2" :class="hoverBorderClass">
+  <div class="group bg-portfolio-white p-8 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-1" :class="hoverBorderClass">
     <div :class="[
-      'w-16 h-16 rounded-2xl flex items-center justify-center mb-6',
+      'w-16 h-16 rounded-xl flex items-center justify-center mb-6',
       'group-hover:scale-110 transition-transform duration-300 shadow-lg',
       iconBgClass
     ]">

@@ -408,18 +408,10 @@ const handleImageUpload = async (e) => {
 
   uploadingImage.value = true
   try {
-    const fileName = `about-${Date.now()}-${file.name}`
-    const { data, error } = await supabase.storage
-      .from('projects')
-      .upload(fileName, file)
-
-    if (error) throw error
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('projects')
-      .getPublicUrl(fileName)
-
+    const { uploadFile } = useSupabaseStorage()
+    const publicUrl = await uploadFile(file, `about-${Date.now()}-${file.name}`)
     aboutContent.value.hero.image = publicUrl
+    useToast().success('Image uploaded successfully')
   } catch (error) {
     console.error('Error uploading image:', error)
     useToast().error('Failed to upload image. Please try again.')

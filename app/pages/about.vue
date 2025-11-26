@@ -223,11 +223,6 @@ const contentFetched = ref(false)
 
 // Fetch content from database
 const fetchContent = async () => {
-  // Skip if already loaded
-  if (contentFetched.value) {
-    return
-  }
-
   try {
     const { data, error } = await supabase
       .from('about_content')
@@ -239,16 +234,33 @@ const fetchContent = async () => {
     }
 
     if (data && data.content) {
-      // Use Object.assign to update values without replacing the whole object
-      // This prevents reactivity issues and visual jumps
-      Object.assign(aboutContent.value, data.content)
-    }
+      // Always update image URL to reflect latest uploads
+      if (data.content.hero?.image) {
+        aboutContent.value.hero.image = data.content.hero.image
+      }
 
-    contentFetched.value = true
+      // Only update text content on first load (prevents flash)
+      if (!contentFetched.value) {
+        if (data.content.hero?.paragraphs) {
+          aboutContent.value.hero.paragraphs = data.content.hero.paragraphs
+        }
+        if (data.content.skills) {
+          Object.assign(aboutContent.value.skills, data.content.skills)
+        }
+        if (data.content.experience) {
+          Object.assign(aboutContent.value.experience, data.content.experience)
+        }
+        if (data.content.cta) {
+          Object.assign(aboutContent.value.cta, data.content.cta)
+        }
+        contentFetched.value = true
+      }
+    }
   } catch (error) {
     console.error('Error fetching about content:', error)
-    // Keep default content if fetch fails
-    contentFetched.value = true
+    if (!contentFetched.value) {
+      contentFetched.value = true
+    }
   }
 }
 

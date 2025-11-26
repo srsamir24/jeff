@@ -18,8 +18,70 @@ logs
 .fleet
 .idea
 
-# Local env files
+# Local env files - IMPORTANT: Never commit these!
 .env
 .env.*
 !.env.example
+
+# Claude Code and AI assistants
+.claude/
 claude.md
+CLAUDE.md
+.agents/
+.cursor/
+.aider*
+
+# Supabase - migrations and config should be version controlled, but exclude local state
+supabase/.branches/
+supabase/.temp/
+supabase/config.toml
+
+# Database dumps and backups
+*.sql.gz
+*.dump
+*.backup
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# Lock files (optional - some teams commit these, some don't)
+# Uncomment if you don't want to commit lock files
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build artifacts
+build/
+out/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local Supabase instance files
+supabase/.gitignore

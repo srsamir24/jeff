@@ -29,17 +29,15 @@
               <p class="text-sm font-medium text-gray-900">{{ user?.email }}</p>
               <p class="text-xs text-gray-500">Administrator</p>
             </div>
-            <AppButton variant="danger" size="sm" rounded="lg" :loading="loggingOut" loading-text="Logging out..."
-              @click="handleLogout">
-              Logout
-              <template #iconRight>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                  </path>
-                </svg>
-              </template>
-            </AppButton>
+            <button @click="handleLogout" :disabled="loggingOut"
+              class="px-4 py-2 bg-bright-pink text-portfolio-white rounded-lg text-sm font-semibold hover:bg-bright-pink/90 transition-all disabled:opacity-50 flex items-center gap-2">
+              <span>{{ loggingOut ? 'Logging out...' : 'Logout' }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                </path>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -135,6 +133,28 @@
           </h3>
           <p class="text-sm text-gray-500">Edit homepage sections & text content</p>
         </NuxtLink>
+
+        <!-- Social Links Card -->
+        <NuxtLink to="/admin/social-links"
+          class="group bg-portfolio-white rounded-2xl p-8 shadow-md border border-gray-100 hover:shadow-xl hover:border-light-green/20 transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div
+              class="w-16 h-16 bg-linear-to-br from-light-green to-light-green/70 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-8 h-8 text-portfolio-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-light-green group-hover:text-bright-pink transition-colors">{{
+                stats.socialLinks || 0 }}</div>
+              <div class="text-xs text-gray-500 mt-1">Links</div>
+            </div>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-light-green transition-colors">Social Links
+          </h3>
+          <p class="text-sm text-gray-500">Manage social media & external URLs</p>
+        </NuxtLink>
       </div>
     </main>
 
@@ -162,7 +182,8 @@ const loggingOut = ref(false)
 // Stats
 const stats = ref({
   projects: 0,
-  featured: 0
+  featured: 0,
+  socialLinks: 0
 })
 
 // Fetch real stats
@@ -178,8 +199,14 @@ const fetchStats = async () => {
     .select('*', { count: 'exact', head: true })
     .eq('featured', true)
 
+  // Get social links count
+  const { count: socialLinksCount } = await supabase
+    .from('social_links')
+    .select('*', { count: 'exact', head: true })
+
   stats.value.projects = projectCount || 0
   stats.value.featured = featuredCount || 0
+  stats.value.socialLinks = socialLinksCount || 0
 }
 
 // Logout with confirmation and animation

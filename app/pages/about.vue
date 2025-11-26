@@ -12,40 +12,35 @@
       </div>
 
       <div class="container mx-auto px-6 relative z-10">
-        <div class="flex flex-col lg:flex-row items-center gap-12">
-          <!-- Image -->
-          <div class="flex-1 flex justify-center lg:justify-start">
-            <div class="relative w-full max-w-md">
-              <div class="relative aspect-square rounded-3xl overflow-hidden shadow-2xl bg-white">
+        <div class="flex flex-col lg:flex-row items-start gap-12">
+          <!-- Professional Photo - Smaller Size -->
+          <div class="lg:w-64 flex justify-center lg:justify-start">
+            <div class="relative">
+              <div class="w-64 h-64 rounded-2xl overflow-hidden shadow-xl bg-white ring-4 ring-white">
                 <!-- Dynamic Image -->
                 <img v-if="aboutContent.hero.image" :src="aboutContent.hero.image" alt="Anna Ericyan"
                   class="w-full h-full object-cover" />
 
                 <!-- Placeholder -->
                 <div v-else
-                  class="absolute inset-0 bg-linear-to-br from-bright-pink/40 via-blue-purple/40 to-light-green/40 backdrop-blur-sm flex items-center justify-center">
-                  <div class="text-center p-8">
-                    <div
-                      class="w-48 h-48 mx-auto bg-portfolio-white/60 backdrop-blur-md rounded-full flex items-center justify-center mb-6 shadow-lg">
-                      <svg class="w-32 h-32 text-blue-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  class="w-full h-full bg-linear-to-br from-bright-pink/30 via-blue-purple/30 to-light-green/30 flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="w-20 h-20 mx-auto bg-portfolio-white/80 rounded-full flex items-center justify-center mb-3">
+                      <svg class="w-12 h-12 text-blue-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
-                    <p class="text-gray-700 font-medium">Your professional photo here</p>
+                    <p class="text-gray-700 text-sm font-medium">Photo</p>
                   </div>
                 </div>
               </div>
-              <!-- Decorative elements -->
-              <div class="absolute -top-6 -right-6 w-24 h-24 bg-light-green rounded-full shadow-xl opacity-80 -z-10">
-              </div>
-              <div
-                class="absolute -bottom-6 -left-6 w-32 h-32 bg-bright-pink/80 rounded-2xl shadow-xl transform rotate-12 -z-10">
-              </div>
+              <!-- Decorative accent -->
+              <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-bright-pink/20 rounded-2xl -z-10"></div>
             </div>
           </div>
 
-          <!-- Text -->
+          <!-- Text Content -->
           <div class="flex-1 text-center lg:text-left">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
               <span class="bg-clip-text text-transparent bg-linear-to-r from-bright-pink via-blue-purple to-light-blue">
@@ -227,16 +222,24 @@ const fetchContent = async () => {
     const { data, error } = await supabase
       .from('about_content')
       .select('*')
-      .single()
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle()
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
+      console.error('Supabase query error:', error)
       throw error
     }
 
     if (data && data.content) {
+      console.log('Fetched about content from database:', data.content)
+
       // Always update image URL to reflect latest uploads
       if (data.content.hero?.image) {
         aboutContent.value.hero.image = data.content.hero.image
+        console.log('Image URL updated to:', aboutContent.value.hero.image)
+      } else {
+        console.log('No image found in database')
       }
 
       // Only update text content on first load (prevents flash)

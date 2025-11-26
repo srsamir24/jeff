@@ -318,14 +318,18 @@ const fetchContent = async () => {
     const { data, error } = await supabase
       .from('about_content')
       .select('*')
-      .single()
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle()
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
+      console.error('Error fetching about content:', error)
       throw error
     }
 
     if (data) {
       aboutContent.value = data.content
+      console.log('Admin fetched content:', data.content)
     }
   } catch (error) {
     console.error('Error fetching about content:', error)
@@ -338,20 +342,25 @@ const fetchContent = async () => {
 const saveAllContent = async () => {
   saving.value = true
   try {
-    // Check if content exists
+    // Check if content exists - get the latest one
     const { data: existing } = await supabase
       .from('about_content')
       .select('id')
-      .single()
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    console.log('Saving content:', aboutContent.value)
 
     if (existing) {
-      // Update existing
+      // Update existing (latest record)
       const { error } = await supabase
         .from('about_content')
         .update({ content: aboutContent.value })
         .eq('id', existing.id)
 
       if (error) throw error
+      console.log('Content updated successfully')
     } else {
       // Insert new
       const { error } = await supabase
@@ -359,6 +368,7 @@ const saveAllContent = async () => {
         .insert([{ content: aboutContent.value }])
 
       if (error) throw error
+      console.log('Content inserted successfully')
     }
 
     useToast().success('Changes saved successfully!')
@@ -410,7 +420,9 @@ const handleImageUpload = async (e) => {
   try {
     const { uploadFile } = useSupabaseStorage()
     const publicUrl = await uploadFile(file, `about-${Date.now()}-${file.name}`)
+    console.log('Image uploaded successfully, URL:', publicUrl)
     aboutContent.value.hero.image = publicUrl
+    console.log('aboutContent.hero.image set to:', aboutContent.value.hero.image)
     useToast().success('Image uploaded successfully')
   } catch (error) {
     console.error('Error uploading image:', error)

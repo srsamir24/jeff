@@ -37,10 +37,10 @@
           </ul>
 
           <div class="flex items-center gap-2">
-            <a href="https://www.upwork.com" target="_blank" rel="noopener noreferrer"
+            <a v-for="link in navLinks" :key="link.id" :href="link.url" target="_blank" rel="noopener noreferrer"
               class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-light-green/40 text-light-green rounded-full text-xs font-bold hover:bg-light-green/50 transition-all shadow-md border border-light-green/30">
               <span class="w-2 h-2 bg-light-green rounded-full animate-pulse"></span>
-              <span>Upwork</span>
+              <span>{{ link.name }}</span>
             </a>
             <NuxtLink v-if="user" to="/admin"
               class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-blue-purple/30 text-blue-purple rounded-full text-xs font-bold hover:bg-blue-purple/40 transition-all shadow-md border border-blue-purple/30">
@@ -97,11 +97,11 @@
                 About
               </NuxtLink>
             </li>
-            <li>
-              <a href="https://www.upwork.com" target="_blank" rel="noopener noreferrer"
+            <li v-for="link in navLinks" :key="link.id">
+              <a :href="link.url" target="_blank" rel="noopener noreferrer"
                 class="flex items-center justify-center space-x-2 px-4 py-3 bg-light-green/10 text-light-green rounded-lg hover:bg-light-green/20 transition-all font-medium">
                 <span class="w-2 h-2 bg-light-green rounded-full animate-pulse"></span>
-                <span>Available on Upwork</span>
+                <span>{{ link.name }}</span>
               </a>
             </li>
             <li v-if="user">
@@ -134,9 +134,11 @@
 </template>
 
 <script setup>
+const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
+const navLinks = ref([])
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
@@ -146,8 +148,27 @@ const handleScroll = () => {
   scrolled.value = window.scrollY > 20
 }
 
+// Fetch social links for navigation
+const fetchNavLinks = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('social_links')
+      .select('*')
+      .eq('is_active', true)
+      .contains('display_location', ['nav'])
+      .order('sort_order', { ascending: true })
+
+    if (!error && data) {
+      navLinks.value = data
+    }
+  } catch (err) {
+    console.error('Error fetching nav social links:', err)
+  }
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  fetchNavLinks()
 })
 
 onUnmounted(() => {

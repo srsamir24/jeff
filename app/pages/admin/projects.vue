@@ -139,7 +139,7 @@
                   class="px-6 py-3 bg-light-blue/10 text-light-blue rounded-lg font-medium hover:bg-light-blue/20 transition-all">
                   {{ formData.image_url ? 'Change Image' : 'Upload Image' }}
                 </button>
-                <p class="text-sm text-gray-500 mt-2">PNG, JPG up to 5MB</p>
+                <p class="text-sm text-gray-500 mt-2">PNG, JPG</p>
 
                 <!-- Image Preview -->
                 <div v-if="formData.image_url" class="mt-4">
@@ -153,7 +153,6 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
               <select v-model="formData.project_type" required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent">
-                <option value="">Select a project type</option>
                 <option value="branding">Branding & Identity</option>
                 <option value="print">Print Design</option>
                 <option value="digital">Digital Design</option>
@@ -162,6 +161,8 @@
                 <option value="ui-ux">UI/UX Design</option>
                 <option value="photography">Photography</option>
                 <option value="web">Web Design</option>
+                <option value="motion">Motion Design</option>
+                <option value="other">Logo</option>
               </select>
               <p class="text-xs text-gray-500 mt-1">Choose the primary type for this project</p>
             </div>

@@ -1,11 +1,12 @@
 <template>
-    <div class="relative group" :class="[
+    <div class="relative group my-8 mx-auto max-w-5xl" :class="[
         content.bgColor ? `bg-${content.bgColor}` : '',
         content.bgGradientEnabled ? getBgGradientClasses(content.bgGradient) : '',
-        content.padding ? `p-${content.padding}` : 'py-16'
+        content.padding ? `p-${content.padding}` : 'py-16 px-8',
+        content.bgColor || content.bgGradientEnabled ? 'rounded-3xl shadow-lg' : ''
     ]">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="prose prose-2xl md:prose-3xl font-bold mb-4 outline-none" :class="[
+            <h2 class="text-3xl md:text-5xl font-bold mb-6 outline-none" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
                 content.textAlign ? `text-${content.textAlign}` : '',
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',
@@ -22,7 +23,7 @@
                 (content.decorations || []).includes('highlight') ? 'bg-yellow-200' : '',
                 (content.decorations || []).includes('uppercase') ? 'uppercase' : ''
             ]" :contenteditable="isEditor" @blur="updateTitle" v-html="content.title"></h2>
-            <p class="prose prose-lg md:prose-xl outline-none" :class="[
+            <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto outline-none" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
                 content.textAlign ? `text-${content.textAlign}` : '',
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',

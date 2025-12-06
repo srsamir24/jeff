@@ -1,7 +1,7 @@
 <template>
-    <div class="relative group">
-        <div class="max-w-6xl mx-auto">
-            <div class="aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl relative">
+    <div class="relative group my-8">
+        <div class="max-w-5xl mx-auto">
+            <div class="aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 relative ring-2 ring-gray-200 hover:ring-blue-purple">
                 <iframe v-if="content.url" :src="getEmbedUrl(content.url)" class="w-full h-full" frameborder="0"
                     allowfullscreen></iframe>
                 <div v-else class="w-full h-full flex items-center justify-center text-gray-500 bg-gray-100">
@@ -13,8 +13,8 @@
             </div>
 
             <div v-if="isEditor" class="mt-6 flex gap-4 justify-center">
-                <input type="text" :value="content.url" @input="updateUrl" placeholder="Paste YouTube or Vimeo URL"
-                    class="w-full max-w-xl px-6 py-3 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+                <input type="text" :value="content.url" @input="updateUrl" placeholder="🎬 Paste YouTube or Vimeo URL"
+                    class="w-full max-w-xl px-6 py-3.5 border-2 border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-purple focus:border-blue-purple outline-none shadow-sm hover:border-light-blue transition-colors">
             </div>
         </div>
     </div>

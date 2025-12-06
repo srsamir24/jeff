@@ -99,7 +99,7 @@
                             <component :is="blockComponents[block.type]" :content="block.props"
                                 :is-editor="!previewMode"
                                 @update="(newProps: Record<string, any>) => updateBlockProps(index, newProps)"
-                                @upload="triggerUpload(block.id)" />
+                                @upload="(galleryIndex?: number) => triggerUpload(block.id, galleryIndex)" />
                         </div>
                     </div>
                 </div>
@@ -718,9 +718,12 @@ const handleCanvasDrop = () => {
 // Image Upload
 const fileInput = ref<HTMLInputElement | null>(null)
 const uploadBlockId = ref<string | null>(null)
+const uploadGalleryIndex = ref<number | null>(null)
+const supabase = useSupabaseClient()
 
-const triggerUpload = (id: string) => {
+const triggerUpload = (id: string, galleryIndex?: number) => {
     uploadBlockId.value = id
+    uploadGalleryIndex.value = galleryIndex ?? null
     fileInput.value?.click()
 }
 
@@ -729,15 +732,56 @@ const handleFileUpload = async (e: Event) => {
     const file = target.files?.[0]
     if (!file || !uploadBlockId.value) return
 
-    const url = URL.createObjectURL(file)
-    const blockIdx = blocks.value.findIndex((b: any) => b.id === uploadBlockId.value)
-    if (blockIdx !== -1) {
-        blocks.value[blockIdx].props.src = url
-        blocks.value = [...blocks.value]
-        emitUpdate()
+    try {
+        // Upload to Supabase Storage
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        const filePath = fileName
+
+        const { data, error: uploadError } = await supabase.storage
+            .from('projects')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            })
+
+        if (uploadError) {
+            console.error('Upload error:', uploadError)
+            alert('Failed to upload image. Please try again.')
+            return
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from('projects')
+            .getPublicUrl(data.path)
+
+        // Update block with the uploaded URL
+        const blockIdx = blocks.value.findIndex((b: any) => b.id === uploadBlockId.value)
+        if (blockIdx !== -1) {
+            const block = blocks.value[blockIdx]
+
+            // Handle gallery uploads (images array)
+            if (uploadGalleryIndex.value !== null && block.props.images) {
+                const newImages = [...block.props.images]
+                newImages[uploadGalleryIndex.value] = publicUrl
+                blocks.value[blockIdx].props.images = newImages
+            } else {
+                // Handle single image uploads (src property)
+                blocks.value[blockIdx].props.src = publicUrl
+            }
+
+            blocks.value = [...blocks.value]
+            emitUpdate()
+        }
+    } catch (error) {
+        console.error('Upload failed:', error)
+        alert('Failed to upload image. Please try again.')
+    } finally {
+        target.value = ''
+        uploadBlockId.value = null
+        uploadGalleryIndex.value = null
     }
-    target.value = ''
-    uploadBlockId.value = null
 }
 
 const emitUpdate = () => {

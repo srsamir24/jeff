@@ -151,33 +151,51 @@ CREATE TRIGGER update_about_content_updated_at
 -- STORAGE BUCKETS
 -- =====================================================
 -- Create the 'projects' bucket for project assets
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('projects', 'projects', true)
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'projects',
+  'projects',
+  true,  -- Public bucket for easy image access
+  52428800,  -- 50MB limit
+  ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+)
+ON CONFLICT (id) DO UPDATE SET
+  public = true,
+  file_size_limit = 52428800,
+  allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
--- Drop existing storage policies if they exist
+-- Drop ALL existing storage policies to avoid conflicts
 DROP POLICY IF EXISTS "Public Access Projects" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Upload Projects" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Update Projects" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Delete Projects" ON storage.objects;
+DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Upload" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Update" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Delete" ON storage.objects;
 DROP POLICY IF EXISTS "Public can view project images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated users can upload project images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated users can update project images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated users can delete project images" ON storage.objects;
+DROP POLICY IF EXISTS "projects_public_read" ON storage.objects;
+DROP POLICY IF EXISTS "projects_auth_insert" ON storage.objects;
+DROP POLICY IF EXISTS "projects_auth_update" ON storage.objects;
+DROP POLICY IF EXISTS "projects_auth_delete" ON storage.objects;
 
--- Storage policies for 'projects' bucket
-CREATE POLICY "Public Access Projects"
+-- Storage policies for 'projects' bucket with unique names
+CREATE POLICY "projects_public_read"
   ON storage.objects FOR SELECT TO public
   USING (bucket_id = 'projects');
 
-CREATE POLICY "Authenticated Upload Projects"
+CREATE POLICY "projects_auth_insert"
   ON storage.objects FOR INSERT TO authenticated
   WITH CHECK (bucket_id = 'projects');
 
-CREATE POLICY "Authenticated Update Projects"
+CREATE POLICY "projects_auth_update"
   ON storage.objects FOR UPDATE TO authenticated
-  USING (bucket_id = 'projects');
+  USING (bucket_id = 'projects')
+  WITH CHECK (bucket_id = 'projects');
 
-CREATE POLICY "Authenticated Delete Projects"
+CREATE POLICY "projects_auth_delete"
   ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'projects');

@@ -1,11 +1,12 @@
 <template>
-    <div class="relative group" :class="[
+    <div class="relative group my-8 mx-auto max-w-5xl" :class="[
         content.bgColor ? `bg-${content.bgColor}` : '',
         content.bgGradientEnabled ? getBgGradientClasses(content.bgGradient) : '',
-        content.padding ? `p-${content.padding}` : 'py-16'
+        content.padding ? `p-${content.padding}` : 'py-12 px-8',
+        content.bgColor || content.bgGradientEnabled ? 'rounded-3xl shadow-sm' : ''
     ]">
         <div class="max-w-3xl mx-auto">
-            <div class="prose prose-lg md:prose-xl prose-slate max-w-none outline-none" :class="[
+            <div class="prose prose-base md:prose-lg prose-slate max-w-none outline-none" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
                 content.textAlign ? `text-${content.textAlign}` : '',
                 content.textColor && !content.gradientText ? `text-${content.textColor}` : '',

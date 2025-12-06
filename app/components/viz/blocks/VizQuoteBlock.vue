@@ -1,13 +1,17 @@
 <template>
-    <div class="relative group" :class="[
-        content.bgColor ? `bg-${content.bgColor}` : '',
-        content.padding ? `p-${content.padding}` : 'py-16'
+    <div class="relative group my-8 mx-auto max-w-4xl" :class="[
+        content.bgColor ? `bg-${content.bgColor}` : 'bg-linear-to-br from-portfolio-white to-gray-50',
+        content.padding ? `p-${content.padding}` : 'py-12 px-10',
+        'rounded-3xl shadow-lg border-l-4 border-bright-pink'
     ]">
-        <div class="max-w-4xl mx-auto" :class="content.textAlign ? `text-${content.textAlign}` : 'text-center'">
-            <blockquote class="text-3xl md:text-5xl font-serif italic mb-8 outline-none leading-tight" :class="[
+        <div class="mx-auto" :class="content.textAlign ? `text-${content.textAlign}` : 'text-center'">
+            <!-- Decorative Quote Mark -->
+            <div class="text-7xl text-bright-pink/20 font-serif leading-none mb-4">"</div>
+
+            <blockquote class="text-2xl md:text-3xl font-serif italic mb-8 outline-none leading-relaxed -mt-12" :class="[
                 content.fontSize ? `text-${content.fontSize}` : '',
-                content.textColor && !content.gradientText ? `text-${content.textColor}` : 'text-gray-900',
-                content.fontWeight ? `font-${content.fontWeight}` : '',
+                content.textColor && !content.gradientText ? `text-${content.textColor}` : 'text-gray-800',
+                content.fontWeight ? `font-${content.fontWeight}` : 'font-medium',
                 content.gradientText ? getGradientClasses(content.gradient || 'rainbow') + ' text-transparent bg-clip-text inline-block' : '',
                 content.animation === 'pulse' ? 'animate-pulse' : '',
                 content.animation === 'bounce' ? 'animate-bounce' : '',
@@ -15,14 +19,16 @@
                 content.animation === 'slide-in-left' ? 'animate-slide-in-left' : '',
                 content.animation === 'slide-in-right' ? 'animate-slide-in-right' : ''
             ]" :contenteditable="isEditor" @blur="updateContent('text', $event)">
-                "{{ content.text }}"
+                {{ content.text }}
             </blockquote>
 
-            <cite class="text-xl not-italic block tracking-wide outline-none" :class="[
-                content.textColor && !content.gradientText ? `text-${content.textColor}` : 'text-gray-500',
-                content.fontWeight ? `font-${content.fontWeight}` : 'font-medium'
+            <cite class="text-lg not-italic tracking-wide outline-none flex items-center justify-center gap-2" :class="[
+                content.textColor && !content.gradientText ? `text-${content.textColor}` : 'text-bright-pink',
+                content.fontWeight ? `font-${content.fontWeight}` : 'font-semibold'
             ]" :contenteditable="isEditor" @blur="updateContent('author', $event)">
-                — {{ content.author }}
+                <span class="w-8 h-0.5 bg-bright-pink"></span>
+                {{ content.author }}
+                <span class="w-8 h-0.5 bg-bright-pink"></span>
             </cite>
         </div>
     </div>

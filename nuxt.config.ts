@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      exclude: ['/', '/work', '/about', '/contact'],
+      exclude: ['/', '/work', '/work/*', '/about', '/contact'],
     },
     types: false // Disable TypeScript types generation
   },

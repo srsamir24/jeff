@@ -9,6 +9,13 @@
         <p class="text-white/30 text-sm uppercase tracking-[0.3em]">System Overview & Statistics</p>
       </div>
 
+      <!-- Birthday Link -->
+      <NuxtLink to="/happybday" class="bday-banner">
+        <span class="bday-pulse"></span>
+        <span class="bday-text">🎂 Her Birthday Wrapped — Open It</span>
+        <span class="bday-arrow">→</span>
+      </NuxtLink>
+
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Projects Stat -->
@@ -134,6 +141,64 @@ onMounted(() => {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.bday-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #FF00A6, #FF9B00, #FF00A6);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(255, 0, 166, 0.5), 0 0 60px rgba(255, 155, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.bday-banner:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 50px rgba(255, 0, 166, 0.7), 0 0 80px rgba(255, 155, 0, 0.5);
+}
+
+.bday-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  animation: pulse 2s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.bday-text { position: relative; z-index: 1; }
+
+.bday-arrow {
+  position: relative;
+  z-index: 1;
+  font-size: 1.4rem;
+  animation: bounceX 1s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes bounceX {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
 }
 </style>
 

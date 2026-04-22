@@ -12,7 +12,7 @@
       <!-- Birthday Link -->
       <NuxtLink to="/happybday" class="bday-banner">
         <span class="bday-pulse"></span>
-        <span class="bday-text">🎂 Her Birthday Wrapped — Open It</span>
+        <span class="bday-text">🎂 Happy Birthday Page — Open It</span>
         <span class="bday-arrow">→</span>
       </NuxtLink>
 

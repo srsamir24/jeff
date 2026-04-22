@@ -44,7 +44,7 @@ definePageMeta({
 
 const route = useRoute()
 const client = useSupabaseClient()
-const toast = useToast() // Assuming useToast composable exists
+const toast = useAppToast() // Using useAppToast composable
 const projectId = route.params.id
 
 const contentBlocks = ref([])

@@ -1,77 +1,67 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-light-blue/20 via-portfolio-white to-lighter-pink/20 flex items-center justify-center px-6 py-12">
-    <div class="w-full max-w-md">
-      <div class="bg-portfolio-white rounded-3xl shadow-2xl p-8 border border-light-blue/20">
-        <!-- Logo/Brand -->
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-bright-pink via-blue-purple to-light-blue mb-2" style="font-family: 'Gendy', sans-serif;">
-            Anna Ericyan
-          </h1>
-          <p class="text-gray-600">Admin Login</p>
+  <div class="login-page section-padding min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background Accents -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--color-neon-teal)] opacity-[0.02] blur-[120px] rounded-full"></div>
+    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[var(--color-electric-violet)] opacity-[0.02] blur-[100px] rounded-full"></div>
+
+    <div class="container mx-auto relative z-10 max-w-xl">
+      <div class="space-y-12">
+        <!-- Logo/Header -->
+        <div class="text-center">
+          <p class="text-overline mb-4">Secured Access</p>
+          <h1 class="text-4xl md:text-5xl mb-2">Anna Ericyan</h1>
+          <p class="opacity-40 font-light italic">Administrative Login</p>
         </div>
 
-        <!-- Error Message -->
-        <div v-if="errorMessage" class="mb-6 p-4 bg-bright-pink/10 border border-bright-pink/20 rounded-lg text-bright-pink text-sm">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Success Message -->
-        <div v-if="successMessage" class="mb-6 p-4 bg-light-green/10 border border-light-green/20 rounded-lg text-light-green text-sm">
-          {{ successMessage }}
-        </div>
+        <!-- Feedback Messages -->
+        <transition name="fade">
+          <div v-if="errorMessage || successMessage" class="space-y-4">
+            <div v-if="errorMessage" class="p-6 bg-red-500/10 text-red-500 rounded-sm text-sm border-l-2 border-red-500">
+              {{ errorMessage }}
+            </div>
+            <div v-if="successMessage" class="p-6 bg-[var(--color-neon-teal)]/10 text-[var(--color-neon-teal)] rounded-sm text-sm border-l-2 border-[var(--color-neon-teal)]">
+              {{ successMessage }}
+            </div>
+          </div>
+        </transition>
 
         <!-- Login Form -->
-        <form @submit.prevent="handleLogin" class="space-y-6">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent transition-all"
-              placeholder="admin@annaericyan.com"
-            />
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-              <NuxtLink to="/forgot-password" class="text-xs text-blue-purple hover:text-bright-pink transition-colors">
-                Forgot password?
-              </NuxtLink>
+        <form @submit.prevent="handleLogin" class="space-y-12">
+          <div class="space-y-8">
+            <div class="relative group">
+              <label class="text-overline mb-2 block opacity-40">Email Address</label>
+              <input v-model="email" type="email" required placeholder="admin@annaericyan.com"
+                class="w-full bg-transparent border-b border-white/10 py-4 text-xl focus:outline-none focus:border-[var(--color-neon-teal)] transition-colors placeholder:opacity-10" />
             </div>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent transition-all"
-              placeholder="••••••••"
-            />
+
+            <div class="relative group">
+              <div class="flex items-center justify-between">
+                <label class="text-overline mb-2 block opacity-40">Password</label>
+                <NuxtLink to="/forgot-password" class="text-[10px] uppercase tracking-wider opacity-40 hover:opacity-100 transition-opacity underline decoration-white/20 underline-offset-4">Reset</NuxtLink>
+              </div>
+              <input v-model="password" type="password" required placeholder="••••••••"
+                class="w-full bg-transparent border-b border-white/10 py-4 text-xl focus:outline-none focus:border-[var(--color-neon-teal)] transition-colors placeholder:opacity-10" />
+            </div>
           </div>
 
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span v-if="!loading">Sign In</span>
-            <span v-else class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-portfolio-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <div class="pt-8">
+            <button type="submit" :disabled="loading"
+              class="group flex items-center gap-4 text-2xl font-medium transition-all hover:gap-6 disabled:opacity-50">
+              <span class="relative">
+                {{ loading ? 'Authenticating...' : 'Sign In' }}
+                <span class="absolute bottom-0 left-0 w-full h-[1px] bg-current"></span>
+              </span>
+              <svg v-if="!loading" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
-              Signing in...
-            </span>
-          </button>
+              <div v-else class="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+            </button>
+          </div>
         </form>
 
-        <!-- Back to Home -->
-        <div class="mt-6 text-center">
-          <NuxtLink to="/" class="text-sm text-gray-600 hover:text-blue-purple transition-colors">
-            ← Back to Home
-          </NuxtLink>
+        <div class="pt-12 text-center opacity-40">
+          <NuxtLink to="/" class="text-overline hover:opacity-100 transition-opacity">Return to Main Site</NuxtLink>
         </div>
       </div>
     </div>

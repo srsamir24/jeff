@@ -1,92 +1,100 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Admin Header -->
-    <header class="bg-portfolio-white border-b border-gray-200 sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center space-x-4">
-          <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-              </path>
-            </svg>
-          </NuxtLink>
-          <h1 class="text-2xl font-bold text-gray-900">Manage Projects</h1>
-          <span class="text-sm text-gray-500">({{ projects.length }} total)</span>
+  <NuxtLayout name="admin">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header Area -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight text-white mb-2 font-display">Manage Projects</h1>
+          <p class="text-white/40 font-medium">Coordinate and showcase your body of work ({{ projects.length }} total)
+          </p>
         </div>
+        <button @click="showAddModal = true"
+          class="group flex items-center justify-center gap-2 px-6 py-3 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300">
+          <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Create Project
+        </button>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
-        <p class="text-gray-500 mt-4">Loading projects...</p>
+      <div v-if="loading" class="flex flex-col items-center justify-center py-24">
+        <div class="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
+        <p class="text-white/40 font-medium animate-pulse">Retrieving projects...</p>
       </div>
 
       <!-- Projects Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Add Project Card -->
-        <div @click="showAddModal = true"
-          class="group cursor-pointer bg-linear-to-br from-blue-purple/5 to-bright-pink/5 rounded-2xl border-2 border-dashed border-blue-purple/30 hover:border-bright-pink/50 transition-all hover:shadow-xl flex items-center justify-center min-h-[400px]">
-          <div class="text-center p-8">
-            <div
-              class="w-20 h-20 mx-auto bg-blue-purple/10 group-hover:bg-bright-pink/10 rounded-full flex items-center justify-center mb-4 transition-all group-hover:scale-110">
-              <svg class="w-10 h-10 text-blue-purple group-hover:text-bright-pink transition-colors" fill="none"
-                stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-purple transition-colors">Add New Project
-            </h3>
-            <p class="text-sm text-gray-500 mt-2">Click to create a project</p>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Add Project Placeholder (Only visible if no projects) -->
+        <div v-if="projects.length === 0" @click="showAddModal = true"
+          class="group cursor-pointer aspect-4/3 rounded-3xl border-2 border-dashed border-white/5 hover:border-white/20 hover:bg-white/[0.02] transition-all flex flex-col items-center justify-center gap-4">
+          <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white/20 group-hover:text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
           </div>
+          <p class="text-white/20 font-bold group-hover:text-white/40 transition-colors">Start your first project</p>
         </div>
 
         <!-- Project Cards -->
         <div v-for="project in displayedProjects" :key="project.id"
-          class="bg-portfolio-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100">
+          class="group relative bg-white/[0.03] rounded-3xl overflow-hidden hover:bg-white/[0.05] transition-all duration-500 flex flex-col">
           <!-- Project Image -->
-          <div class="relative aspect-4/3 bg-gray-100">
+          <div class="relative aspect-4/3 overflow-hidden bg-white/5">
             <img v-if="project.image_url" :src="project.image_url" :alt="project.title"
-              class="w-full h-full object-cover" />
-            <div v-else class="w-full h-full flex items-center justify-center">
-              <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+            <div v-else class="w-full h-full flex items-center justify-center opacity-20">
+              <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
+            </div>
+
+            <!-- Absolute Overlay for critical status -->
+            <div class="absolute top-4 right-4 flex gap-2">
+              <button @click.stop="editProject(project)"
+                class="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+              <button @click.stop="deleteProject(project.id)"
+                class="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-bright-pink hover:bg-white/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             </div>
           </div>
 
           <!-- Project Info -->
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ project.title }}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ project.description }}</p>
+          <div class="p-8 flex-1 flex flex-col">
+            <div class="flex items-start justify-between gap-4 mb-4">
+              <h3 class="text-xl font-bold text-white group-hover:text-bright-pink transition-colors line-clamp-1 font-display">
+                {{ project.title }}
+              </h3>
+            </div>
+            <p class="text-white/40 text-sm leading-relaxed mb-6 line-clamp-2">
+              {{ project.description }}
+            </p>
 
             <!-- Tags -->
-            <div v-if="project.tags && project.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
+            <div v-if="project.tags && project.tags.length > 0" class="flex flex-wrap gap-2 mb-8">
               <span v-for="(tag, index) in project.tags" :key="index"
-                :class="['px-3 py-1 text-xs rounded-full font-medium', tag.class || 'bg-blue-purple/10 text-blue-purple']">
+                class="px-3 py-1 text-[10px] uppercase tracking-widest bg-white/[0.05] text-white/60 rounded-full font-bold">
                 {{ tag.label }}
               </span>
             </div>
 
-            <!-- Actions -->
-            <div class="flex flex-col gap-2">
+            <!-- Main Action -->
+            <div class="mt-auto">
               <NuxtLink :to="`/admin/project-content/${project.id}`"
-                class="px-4 py-2 bg-blue-purple/10 text-blue-purple rounded-lg text-sm font-medium hover:bg-blue-purple/20 transition-all text-center">
-                Edit Content
+                class="block w-full py-3 bg-white/5 border border-white/5 text-white/80 rounded-2xl text-center text-sm font-bold hover:bg-white hover:text-black hover:border-white transition-all duration-300">
+                Manage Content
               </NuxtLink>
-              <div class="flex gap-2">
-                <button @click="editProject(project)"
-                  class="flex-1 px-4 py-2 bg-light-blue/10 text-light-blue rounded-lg text-sm font-medium hover:bg-light-blue/20 transition-all">
-                  Edit Info
-                </button>
-                <button @click="deleteProject(project.id)"
-                  class="flex-1 px-4 py-2 bg-bright-pink/10 text-bright-pink rounded-lg text-sm font-medium hover:bg-bright-pink/20 transition-all">
-                  Delete
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -94,99 +102,118 @@
 
       <!-- Show More Button -->
       <div v-if="!loading && projects.length > itemsToShow && displayedProjects.length < projects.length"
-        class="text-center mt-8">
+        class="flex justify-center mt-16">
         <button @click="showMore"
-          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl">
-          Show More ({{ projects.length - displayedProjects.length }} remaining)
+          class="px-10 py-4 bg-white/5 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all duration-300 border border-white/10">
+          Load More ({{ projects.length - displayedProjects.length }} remaining)
         </button>
       </div>
-    </main>
+    </div>
 
-    <!-- Add/Edit Modal -->
+    <!-- Add/Edit Modal (Premium Borderless) -->
     <div v-if="showAddModal"
-      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6"
+      class="fixed inset-0 bg-[#080210]/80 backdrop-blur-xl flex items-center justify-center z-[100] p-6"
       @click.self="closeModal">
-      <div class="bg-portfolio-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">
-            {{ editingProject ? 'Edit Project' : 'Add New Project' }}
-          </h2>
+      <div class="bg-white/5 border border-white/10 rounded-[2.5rem] shadow-2xl max-w-xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="p-10 overflow-y-auto">
+          <div class="flex items-center justify-between mb-10">
+            <h2 class="text-3xl font-bold text-white font-display">
+              {{ editingProject ? 'Edit Project' : 'New Project' }}
+            </h2>
+            <button @click="closeModal" class="text-white/40 hover:text-white transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
-          <form @submit.prevent="saveProject" class="space-y-6">
+          <form @submit.prevent="saveProject" class="space-y-8">
             <!-- Title -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+            <div class="space-y-3">
+              <label class="block text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Project Title</label>
               <input v-model="formData.title" type="text" required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Brand Identity Design" />
+                class="w-full px-6 py-4 bg-white/5 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-bright-pink focus:border-transparent outline-hidden transition-all placeholder:text-white/20"
+                placeholder="Unique brand identity..." />
             </div>
 
             <!-- Description -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <div class="space-y-3">
+              <label class="block text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Summary</label>
               <textarea v-model="formData.description" required rows="3"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                placeholder="Brief description for project cards"></textarea>
+                class="w-full px-6 py-4 bg-white/5 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-bright-pink focus:border-transparent outline-hidden transition-all placeholder:text-white/20 resize-none"
+                placeholder="A brief overview of this work..."></textarea>
             </div>
 
             <!-- Image Upload -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Project Image</label>
-              <div
-                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-purple transition-colors">
-                <input ref="fileInput" type="file" accept="image/*" @change="handleFileUpload" class="hidden" />
-                <button type="button" @click="$refs.fileInput.click()"
-                  class="px-6 py-3 bg-light-blue/10 text-light-blue rounded-lg font-medium hover:bg-light-blue/20 transition-all">
-                  {{ formData.image_url ? 'Change Image' : 'Upload Image' }}
-                </button>
-                <p class="text-sm text-gray-500 mt-2">PNG, JPG</p>
-
-                <!-- Image Preview -->
-                <div v-if="formData.image_url" class="mt-4">
-                  <img :src="formData.image_url" alt="Preview" class="max-h-48 mx-auto rounded-lg" />
+            <div class="space-y-3">
+              <label class="block text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Cover Image</label>
+              <div class="relative group">
+                <div v-if="formData.image_url" class="relative rounded-3xl overflow-hidden mb-4 aspect-16/9 bg-white/5 border border-white/10">
+                  <img :src="formData.image_url" alt="Preview" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                    <button type="button" @click="$refs.fileInput.click()" class="px-5 py-2 bg-white text-black rounded-full font-bold text-sm transform translate-y-4 group-hover:translate-y-0 transition-all">Change</button>
+                  </div>
                 </div>
+                <div v-else @click="$refs.fileInput.click()" 
+                  class="cursor-pointer py-12 rounded-3xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/[0.02] transition-all text-center flex flex-col items-center justify-center">
+                  <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <span class="text-white/40 font-bold">Select high-quality visual</span>
+                  <span class="text-white/20 text-xs mt-1">PNG, JPG or WebP</span>
+                </div>
+                <input ref="fileInput" type="file" accept="image/*" @change="handleFileUpload" class="hidden" />
               </div>
             </div>
 
             <!-- Project Type -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
-              <select v-model="formData.project_type" required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent">
-                <option value="branding">Branding & Identity</option>
-                <option value="print">Print Design</option>
-                <option value="digital">Digital Design</option>
-                <option value="packaging">Packaging Design</option>
-                <option value="illustration">Illustration</option>
-                <option value="ui-ux">UI/UX Design</option>
-                <option value="photography">Photography</option>
-                <option value="web">Web Design</option>
-                <option value="motion">Motion Design</option>
-                <option value="other">Logo</option>
-              </select>
-              <p class="text-xs text-gray-500 mt-1">Choose the primary type for this project</p>
+            <div class="space-y-3">
+              <label class="block text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Category</label>
+              <div class="relative">
+                <select v-model="formData.project_type" required
+                  class="w-full px-6 py-4 bg-white/5 border border-white/10 text-white rounded-2xl focus:ring-2 focus:ring-bright-pink focus:border-transparent outline-hidden transition-all appearance-none cursor-pointer">
+                  <option value="branding" class="bg-[#080210] font-sans">Branding & Identity</option>
+                  <option value="print" class="bg-[#080210] font-sans">Print Design</option>
+                  <option value="digital" class="bg-[#080210] font-sans">Digital Design</option>
+                  <option value="packaging" class="bg-[#080210] font-sans">Packaging Design</option>
+                  <option value="illustration" class="bg-[#080210] font-sans">Illustration</option>
+                  <option value="ui-ux" class="bg-[#080210] font-sans">UI/UX Design</option>
+                  <option value="photography" class="bg-[#080210] font-sans">Photography</option>
+                  <option value="web" class="bg-[#080210] font-sans">Web Design</option>
+                  <option value="motion" class="bg-[#080210] font-sans">Motion Design</option>
+                  <option value="other" class="bg-[#080210] font-sans">Logo</option>
+                </select>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            <!-- Actions -->
-            <div class="flex gap-4">
+            <!-- Form Actions -->
+            <div class="flex items-center gap-4 pt-4">
               <button type="button" @click="closeModal"
-                class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all">
+                class="flex-1 px-8 py-4 bg-white/5 text-white rounded-2xl font-bold hover:bg-white/10 transition-all">
                 Cancel
               </button>
               <button type="submit" :disabled="uploading"
-                class="flex-1 px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50">
-                {{ uploading ? 'Uploading...' : (editingProject ? 'Update' : 'Create') }} Project
+                class="flex-1 px-8 py-4 bg-white text-black rounded-2xl font-bold hover:bg-bright-pink hover:text-white transition-all disabled:opacity-50">
+                <span v-if="uploading">Processing...</span>
+                <span v-else>{{ editingProject ? 'Update' : 'Launch' }} Project</span>
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Confirm Dialog -->
-  <ConfirmDialog :show="confirmDialog.showDialog.value" :message="confirmDialog.message.value"
-    @confirm="confirmDialog.handleConfirm()" @cancel="confirmDialog.handleCancel()" />
+    <!-- Confirm Dialog -->
+    <ConfirmDialog :show="confirmDialog.showDialog.value" :message="confirmDialog.message.value"
+      @confirm="confirmDialog.handleConfirm()" @cancel="confirmDialog.handleCancel()" />
+  </NuxtLayout>
 </template>
 
 <script setup>
@@ -199,7 +226,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
-const toast = useToast()
+const toast = useAppToast()
 const confirmDialog = useConfirm()
 
 // State

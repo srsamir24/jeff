@@ -1,9 +1,11 @@
 <template>
-  <div class="text-center">
+  <div class="text-center p-6">
     <div :class="['text-4xl md:text-5xl font-bold mb-2', colorClass]">
       {{ value }}
     </div>
-    <div class="text-gray-600">{{ label }}</div>
+    <div class="text-sm text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+      {{ label }}
+    </div>
   </div>
 </template>
 

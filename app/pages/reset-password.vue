@@ -1,85 +1,85 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-light-blue/20 via-portfolio-white to-lighter-pink/20 flex items-center justify-center px-6 py-12">
+  <div class="min-h-screen bg-[#080210] flex items-center justify-center px-6 py-12 font-['Inter']">
     <div class="w-full max-w-md">
-      <div class="bg-portfolio-white rounded-3xl shadow-2xl p-8 border border-light-blue/20">
+      <div class="space-y-12">
         <!-- Logo/Brand -->
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-bright-pink via-blue-purple to-light-blue mb-2" style="font-family: 'Gendy', sans-serif;">
-            Anna Ericyan
+        <div class="text-center">
+          <h1 class="text-4xl font-bold text-white mb-4 tracking-tighter" style="font-family: 'Space Grosskesk', sans-serif;">
+            ANNA ERICYAN
           </h1>
-          <p class="text-gray-600">Set New Password</p>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="errorMessage" class="mb-6 p-4 bg-bright-pink/10 border border-bright-pink/20 rounded-lg text-bright-pink text-sm">
-          {{ errorMessage }}
+          <p class="text-white/40 text-sm uppercase tracking-widest">Set New Password</p>
         </div>
 
         <!-- Success Message -->
-        <div v-if="successMessage" class="mb-6 p-4 bg-light-green/10 border border-light-green/20 rounded-lg text-light-green text-sm">
-          {{ successMessage }}
+        <div v-if="successMessage" class="space-y-8 text-center animate-fade-in">
+          <p class="text-white/60 leading-relaxed max-w-xs mx-auto">
+            {{ successMessage }}
+          </p>
+          <div class="pt-4">
+            <NuxtLink to="/login" class="group inline-flex flex-col items-center">
+              <span class="text-white text-sm font-medium mb-1">Proceed to Login</span>
+              <div class="h-px w-0 bg-white group-hover:w-full transition-all duration-500"></div>
+            </NuxtLink>
+          </div>
         </div>
 
-        <!-- Reset Password Form -->
-        <form v-if="!successMessage" @submit.prevent="handlePasswordReset" class="space-y-6">
-          <div>
-            <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-            <input
-              id="newPassword"
-              v-model="newPassword"
-              type="password"
-              required
-              minlength="6"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent transition-all"
-              placeholder="••••••••"
-            />
-            <p class="mt-1 text-xs text-gray-500">Minimum 6 characters</p>
+        <template v-else>
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="p-4 bg-red-500/10 text-red-400 text-xs text-center rounded-sm border border-red-500/10">
+            {{ errorMessage }}
           </div>
 
-          <div>
-            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-            <input
-              id="confirmPassword"
-              v-model="confirmPassword"
-              type="password"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent transition-all"
-              placeholder="••••••••"
-            />
+          <!-- Reset Password Form -->
+          <form @submit.prevent="handlePasswordReset" class="space-y-8">
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <label for="newPassword" class="block text-[10px] uppercase tracking-[0.2em] text-white/30 font-medium ml-1">New Password</label>
+                <input
+                  id="newPassword"
+                  v-model="newPassword"
+                  type="password"
+                  required
+                  minlength="6"
+                  class="w-full bg-white/5 border-none px-4 py-4 text-white placeholder-white/10 focus:ring-1 focus:ring-white/20 transition-all text-sm rounded-sm"
+                  placeholder="••••••••"
+                />
+                <p class="text-[9px] text-white/20 uppercase tracking-wider ml-1">Minimum 6 characters</p>
+              </div>
+
+              <div class="space-y-2">
+                <label for="confirmPassword" class="block text-[10px] uppercase tracking-[0.2em] text-white/30 font-medium ml-1">Confirm Password</label>
+                <input
+                  id="confirmPassword"
+                  v-model="confirmPassword"
+                  type="password"
+                  required
+                  class="w-full bg-white/5 border-none px-4 py-4 text-white placeholder-white/10 focus:ring-1 focus:ring-white/20 transition-all text-sm rounded-sm"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              :disabled="loading"
+              class="w-full group py-4 transition-all duration-500 relative overflow-hidden"
+            >
+              <div class="relative z-10 flex items-center justify-center">
+                <span v-if="!loading" class="text-white text-xs uppercase tracking-[0.3em] font-medium group-hover:tracking-[0.4em] transition-all duration-500">Reset Password</span>
+                <span v-else class="text-white/40 text-xs uppercase tracking-[0.3em] font-medium">Resetting...</span>
+              </div>
+              <div class="absolute inset-0 bg-white/5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+            </button>
+          </form>
+
+          <!-- Back to Login -->
+          <div class="text-center pt-8">
+            <NuxtLink to="/login" class="group inline-flex flex-col items-center">
+              <span class="text-white/30 group-hover:text-white text-[10px] uppercase tracking-widest transition-colors duration-500">Back to Login</span>
+              <div class="h-px w-0 bg-white group-hover:w-full transition-all duration-500 mt-1"></div>
+            </NuxtLink>
           </div>
-
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span v-if="!loading">Reset Password</span>
-            <span v-else class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-portfolio-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Resetting password...
-            </span>
-          </button>
-        </form>
-
-        <!-- Success - Go to Login -->
-        <div v-if="successMessage" class="mt-6 text-center">
-          <NuxtLink
-            to="/login"
-            class="inline-block px-8 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all duration-300 shadow-lg"
-          >
-            Go to Login
-          </NuxtLink>
-        </div>
-
-        <!-- Back to Login (if not success) -->
-        <div v-else class="mt-6 text-center">
-          <NuxtLink to="/login" class="text-sm text-gray-600 hover:text-blue-purple transition-colors">
-            ← Back to Login
-          </NuxtLink>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -99,14 +99,12 @@ const handlePasswordReset = async () => {
   errorMessage.value = ''
   successMessage.value = ''
 
-  // Validate passwords match
   if (newPassword.value !== confirmPassword.value) {
     errorMessage.value = 'Passwords do not match'
     loading.value = false
     return
   }
 
-  // Validate password length
   if (newPassword.value.length < 6) {
     errorMessage.value = 'Password must be at least 6 characters'
     loading.value = false
@@ -122,7 +120,6 @@ const handlePasswordReset = async () => {
       errorMessage.value = error.message
     } else {
       successMessage.value = 'Password reset successfully! You can now log in with your new password.'
-      // Clear form
       newPassword.value = ''
       confirmPassword.value = ''
     }
@@ -133,3 +130,15 @@ const handlePasswordReset = async () => {
   }
 }
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+

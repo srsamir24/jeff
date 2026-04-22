@@ -1,154 +1,169 @@
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 bg-portfolio-white/80 backdrop-blur-md border-b border-light-blue/20 transition-all duration-300"
-    :class="{ 'shadow-lg': scrolled }">
-    <div class="container mx-auto px-6 py-5">
-      <div class="flex items-center justify-between">
-        <!-- Logo / Brand -->
-        <NuxtLink to="/" class="group">
-          <div
-            class="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-bright-pink via-blue-purple to-light-blue group-hover:scale-105 transition-transform duration-300"
-            style="font-family: 'Ibrand','Gendy', sans-serif;">
-            Anna Ericyan
-          </div>
-        </NuxtLink>
+    ref="navRef"
+    :class="[
+      'fixed top-0 left-0 right-0 z-[100] h-16 flex items-center justify-between px-6 md:px-12 transition-all duration-300',
+      isDarkSection ? 'bg-zinc-900/80 text-paper border-b border-paper/5' : 'bg-paper/80 text-charcoal border-b border-charcoal/5',
+      'backdrop-blur-xl'
+    ]"
+  >
+    <!-- Logo -->
+    <NuxtLink
+      to="/"
+      class="font-hero text-2xl tracking-tighter hover:opacity-70 transition-opacity"
+      :class="isDarkSection ? 'text-paper' : 'text-charcoal'"
+    >
+      Anna Ericyan
+    </NuxtLink>
 
-        <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center gap-8">
-          <ul class="flex items-center space-x-1">
-            <li>
-              <NuxtLink to="/"
-                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all duration-200">
-                Home
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/work"
-                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all duration-200">
-                Work
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/about"
-                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all duration-200">
-                About
-              </NuxtLink>
-            </li>
-          </ul>
+    <!-- Desktop menu -->
+    <div class="hidden md:flex items-center gap-10">
+      <NuxtLink
+        v-for="link in mainLinks"
+        :key="link.to"
+        :to="link.to"
+        class="font-display text-[13px] font-medium uppercase tracking-[0.05em] transition-all hover:opacity-100"
+        :class="[
+          isActive(link.to) ? 'opacity-100' : 'opacity-60',
+          isDarkSection ? 'text-paper' : 'text-charcoal'
+        ]"
+      >
+        {{ link.label }}
+      </NuxtLink>
 
-          <div class="flex items-center gap-2">
-            <a v-for="link in navLinks" :key="link.id" :href="link.url" target="_blank" rel="noopener noreferrer"
-              class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-light-green/40 text-light-green rounded-full text-xs font-bold hover:bg-light-green/50 transition-all shadow-md border border-light-green/30">
-              <span class="w-2 h-2 bg-light-green rounded-full animate-pulse"></span>
-              <span>{{ link.name }}</span>
-            </a>
-            <NuxtLink v-if="user" to="/admin"
-              class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-blue-purple/30 text-blue-purple rounded-full text-xs font-bold hover:bg-blue-purple/40 transition-all shadow-md border border-blue-purple/30">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span>Admin</span>
-            </NuxtLink>
-          </div>
+      <!-- Admin Link if logged in -->
+      <NuxtLink
+        v-if="user"
+        to="/admin"
+        class="font-display text-[13px] font-medium uppercase tracking-[0.05em] opacity-60 hover:opacity-100"
+        :class="isDarkSection ? 'text-paper' : 'text-charcoal'"
+      >
+        Dashboard
+      </NuxtLink>
 
-          <AppButton
-            to="/contact"
-            variant="secondary"
-            size="sm"
-          >
-            Let's Talk
-          </AppButton>
-        </div>
+      <!-- Social Links from DB -->
+      <a
+        v-for="link in navLinks"
+        :key="link.id"
+        :href="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-display text-[13px] font-medium uppercase tracking-[0.05em] opacity-60 hover:opacity-100"
+        :class="isDarkSection ? 'text-paper' : 'text-charcoal'"
+      >
+        {{ link.name }}
+      </a>
+    </div>
 
-        <!-- Mobile Menu Button -->
-        <button @click="toggleMobileMenu"
-          class="md:hidden p-2 text-blue-purple hover:text-bright-pink transition-colors rounded-lg hover:bg-bright-pink/5">
-          <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-          <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
+    <!-- Right Side Actions -->
+    <div class="flex items-center gap-6">
+      <!-- Theme Toggle -->
+      <ClientOnly>
+        <button
+          class="w-9 h-9 rounded-full border flex items-center justify-center transition-all hover:bg-ice/20"
+          :class="isDarkSection ? 'border-paper/10' : 'border-charcoal/10'"
+          @click="toggleColorMode"
+        >
+          <UIcon
+            :name="isDark ? 'lucide:sun' : 'lucide:moon'"
+            class="w-4 h-4"
+            :class="isDarkSection ? 'text-paper' : 'text-charcoal'"
+          />
         </button>
+      </ClientOnly>
+
+      <!-- Let's Talk Button -->
+      <NuxtLink
+        to="/contact"
+        class="hidden md:block font-display text-[13px] font-semibold uppercase tracking-wider py-2 px-6 rounded-full transition-all"
+        :class="isDarkSection ? 'bg-paper text-charcoal hover:bg-ice' : 'bg-charcoal text-paper hover:opacity-90'"
+      >
+        Let's Talk
+      </NuxtLink>
+
+      <!-- Mobile Toggle -->
+      <button
+        class="md:hidden p-2"
+        @click="mobileMenuOpen = !mobileMenuOpen"
+      >
+        <UIcon
+          :name="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'"
+          class="w-6 h-6"
+          :class="isDarkSection ? 'text-paper' : 'text-charcoal'"
+        />
+      </button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      v-if="mobileMenuOpen"
+      class="fixed inset-0 top-16 z-[90] md:hidden px-6 py-12 flex flex-col gap-8 backdrop-blur-2xl"
+      :class="isDarkSection ? 'bg-zinc-900/95 text-paper' : 'bg-paper/95 text-charcoal'"
+    >
+      <NuxtLink
+        v-for="link in [...mainLinks, ...(user ? [{to:'/admin', label:'Dashboard'}] : [])]"
+        :key="link.to"
+        :to="link.to"
+        class="font-display text-3xl font-bold tracking-tighter"
+        @click="mobileMenuOpen = false"
+      >
+        {{ link.label }}
+      </NuxtLink>
+      
+      <div class="h-px w-full opacity-10" :class="isDarkSection ? 'bg-paper' : 'bg-charcoal'" />
+      
+      <div class="flex flex-col gap-4">
+        <a
+          v-for="link in navLinks"
+          :key="link.id"
+          :href="link.url"
+          target="_blank"
+          class="font-display text-sm uppercase tracking-widest opacity-60"
+        >
+          {{ link.name }}
+        </a>
       </div>
 
-      <!-- Mobile Menu -->
-      <transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 -translate-y-2"
-        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in"
-        leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
-        <div v-if="mobileMenuOpen" class="md:hidden mt-4 pb-4 border-t border-light-blue/20 pt-4">
-          <ul class="space-y-2">
-            <li>
-              <NuxtLink to="/" @click="toggleMobileMenu"
-                class="block px-4 py-3 text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all font-medium">
-                Home
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/work" @click="toggleMobileMenu"
-                class="block px-4 py-3 text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all font-medium">
-                Work
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/about" @click="toggleMobileMenu"
-                class="block px-4 py-3 text-gray-700 hover:text-bright-pink hover:bg-bright-pink/5 rounded-lg transition-all font-medium">
-                About
-              </NuxtLink>
-            </li>
-            <li v-for="link in navLinks" :key="link.id">
-              <a :href="link.url" target="_blank" rel="noopener noreferrer"
-                class="flex items-center justify-center space-x-2 px-4 py-3 bg-light-green/10 text-light-green rounded-lg hover:bg-light-green/20 transition-all font-medium">
-                <span class="w-2 h-2 bg-light-green rounded-full animate-pulse"></span>
-                <span>{{ link.name }}</span>
-              </a>
-            </li>
-            <li v-if="user">
-              <NuxtLink to="/admin" @click="toggleMobileMenu"
-                class="flex items-center justify-center space-x-2 px-4 py-3 bg-light-blue/10 text-light-blue rounded-lg hover:bg-light-blue/20 transition-all font-medium">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                <span>Admin Dashboard</span>
-              </NuxtLink>
-            </li>
-            <li class="flex justify-center">
-              <AppButton
-                to="/contact"
-                variant="primary"
-                size="md"
-                @click="toggleMobileMenu"
-              >
-                Let's Talk
-              </AppButton>
-            </li>
-          </ul>
-        </div>
-      </transition>
+      <NuxtLink
+        to="/contact"
+        class="mt-auto py-5 text-center rounded-xl font-display font-bold uppercase tracking-widest"
+        :class="isDarkSection ? 'bg-paper text-charcoal' : 'bg-charcoal text-paper'"
+        @click="mobileMenuOpen = false"
+      >
+        Start a Project
+      </NuxtLink>
     </div>
   </nav>
-  <!-- Spacer to prevent content from hiding under fixed nav -->
-  <div class="h-20"></div>
 </template>
 
 <script setup>
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const colorMode = useColorMode()
+const route = useRoute()
+
 const mobileMenuOpen = ref(false)
-const scrolled = ref(false)
 const navLinks = ref([])
+const isDarkSection = ref(false)
+const navRef = ref(null)
 
-const toggleMobileMenu = () => {
-  mobileMenuOpen.value = !mobileMenuOpen.value
+const isDark = computed(() => colorMode.value === 'dark')
+
+const toggleColorMode = () => {
+  colorMode.preference = isDark.value ? 'light' : 'dark'
 }
 
-const handleScroll = () => {
-  scrolled.value = window.scrollY > 20
+const mainLinks = [
+  { to: '/', label: 'Work' },
+  { to: '/work', label: 'Projects' },
+  { to: '/about', label: 'About' },
+]
+
+const isActive = (path) => {
+  if (path === '/' && route.path !== '/') return false
+  return route.path.startsWith(path)
 }
 
-// Fetch social links for navigation
 const fetchNavLinks = async () => {
   try {
     const { data, error } = await supabase
@@ -158,20 +173,42 @@ const fetchNavLinks = async () => {
       .contains('display_location', ['nav'])
       .order('sort_order', { ascending: true })
 
-    if (!error && data) {
-      navLinks.value = data
-    }
+    if (!error && data) navLinks.value = data
   } catch (err) {
     console.error('Error fetching nav social links:', err)
   }
 }
 
+// Premium Theme Switching Logic based on Scroll position
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
   fetchNavLinks()
-})
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  // Intersection Observer to detect if we are over a dark section
+  const observer = new IntersectionObserver(
+    (entries) => {
+      let darkVisibility = 0
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          darkVisibility += entry.intersectionRatio
+        }
+      })
+      isDarkSection.value = darkVisibility > 0.1
+    },
+    { threshold: Array.from({ length: 20 }, (_, i) => (i + 1) / 20) }
+  )
+
+  // Give it a bit of time for DOM to stabilize
+  setTimeout(() => {
+    document.querySelectorAll('[data-theme="dark"]').forEach(el => observer.observe(el))
+  }, 1000)
+
+  onUnmounted(() => observer.disconnect())
 })
 </script>
+
+<style scoped>
+/* Force gendy for logo if font-hero used */
+.font-hero {
+  font-family: 'Gendy', serif !important;
+}
+</style>

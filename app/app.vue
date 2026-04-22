@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <SmoothScroll>
     <NuxtLayout>
       <NuxtPage />
-
     </NuxtLayout>
     <ToastContainer />
-  </div>
+  </SmoothScroll>
 </template>
 
 <script setup>

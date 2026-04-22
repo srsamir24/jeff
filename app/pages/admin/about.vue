@@ -1,69 +1,67 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Admin Header -->
-    <header class="bg-portfolio-white border-b border-gray-200 sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-                </path>
-              </svg>
-            </NuxtLink>
-            <h1 class="text-2xl font-bold text-gray-900">Manage About Page</h1>
-          </div>
-          <button @click="saveAllContent" :disabled="saving"
-            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50">
-            {{ saving ? 'Saving...' : 'Save All Changes' }}
-          </button>
+  <NuxtLayout name="admin">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header Area -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight text-white mb-2 font-display">Manage About</h1>
+          <p class="text-white/40 font-medium">Curate your professional story and background</p>
         </div>
+        <button @click="saveAllContent" :disabled="saving"
+          class="group flex items-center justify-center gap-2 px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300 disabled:opacity-50">
+          <span v-if="!saving" class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Save All Changes
+          </span>
+          <span v-else class="flex items-center gap-2">
+            <div class="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+            Saving...
+          </span>
+        </button>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8 max-w-5xl">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
-        <p class="text-gray-500 mt-4">Loading content...</p>
+      <div v-if="loading" class="flex flex-col items-center justify-center py-24">
+        <div class="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
+        <p class="text-white/40 font-medium animate-pulse">Retrieving content...</p>
       </div>
 
       <!-- Content Editor -->
-      <div v-else class="space-y-8">
+      <div v-else class="space-y-12 pb-12">
         <!-- Hero Section -->
-        <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span
-              class="w-8 h-8 bg-bright-pink/10 text-bright-pink rounded-lg flex items-center justify-center text-sm font-bold">1</span>
-            Hero Section
-          </h2>
+        <section class="bg-white/[0.02] backdrop-blur-3xl rounded-[32px] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.04]">
+          <div class="flex items-center gap-4 mb-10">
+            <span class="text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Step 1</span>
+            <h2 class="text-2xl font-bold font-display">Hero Section</h2>
+          </div>
 
-          <div class="space-y-6">
+          <div class="space-y-10">
             <!-- Profile Image -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
-              <div class="flex items-center gap-6">
-                <div class="relative w-32 h-32 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-200">
+              <label class="text-overline block mb-4">Profile Image</label>
+              <div class="flex flex-col sm:flex-row items-center gap-8">
+                <div class="relative w-40 h-40 bg-white/5 rounded-full overflow-hidden">
                   <img v-if="aboutContent.hero.image" :src="aboutContent.hero.image"
-                    class="w-full h-full object-cover" />
-                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                  <div v-else class="w-full h-full flex items-center justify-center text-white/10">
+                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
                   <!-- Loading Overlay -->
-                  <div v-if="uploadingImage" class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  <div v-if="uploadingImage" class="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                    <div class="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                   </div>
                 </div>
-                <div>
+                <div class="flex flex-col items-center sm:items-start gap-4">
                   <button @click="$refs.fileInput.click()" :disabled="uploadingImage"
-                    class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all mb-2">
-                    {{ aboutContent.hero.image ? 'Change Photo' : 'Upload Photo' }}
+                    class="px-6 py-2 bg-white/5 hover:bg-white/10 text-white rounded-full text-xs font-bold tracking-widest uppercase transition-all">
+                    {{ aboutContent.hero.image ? 'Replace Photo' : 'Upload Photo' }}
                   </button>
-                  <p class="text-xs text-gray-500">Recommended: Square image, at least 400x400px</p>
+                  <p class="text-[10px] text-white/20 tracking-wider">RECOMMENDED: SQUARE IMAGE, MIN 800PX</p>
                   <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleImageUpload">
                 </div>
               </div>
@@ -71,173 +69,207 @@
 
             <!-- Bio Paragraphs -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">About Me Paragraphs</label>
+              <label class="text-overline block mb-4">About Me Narrative</label>
               <div class="space-y-4">
-                <div v-for="(paragraph, index) in aboutContent.hero.paragraphs" :key="index" class="relative">
+                <div v-for="(paragraph, index) in aboutContent.hero.paragraphs" :key="index" class="group relative">
                   <textarea v-model="aboutContent.hero.paragraphs[index]" rows="3"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    :placeholder="`Paragraph ${index + 1}`"></textarea>
+                    class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white/80 placeholder:text-white/10 focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] transition-all resize-none outline-none border-none"
+                    :placeholder="`Enter paragraph ${index + 1}...`"></textarea>
                   <button v-if="aboutContent.hero.paragraphs.length > 1" @click="removeParagraph(index)"
-                    class="absolute top-2 right-2 p-2 text-bright-pink hover:bg-bright-pink/10 rounded-lg transition-all">
+                    class="absolute top-4 right-4 p-2 text-white/20 hover:text-bright-pink hover:bg-bright-pink/10 rounded-xl transition-all opacity-0 group-hover:opacity-100">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                      </path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                   </button>
                 </div>
                 <button @click="addParagraph"
-                  class="px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
-                  + Add Paragraph
+                  class="flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Add Paragraph
                 </button>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Skills Section -->
-        <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span
-              class="w-8 h-8 bg-light-blue/10 text-light-blue rounded-lg flex items-center justify-center text-sm font-bold">2</span>
-            Skills Section
-          </h2>
+        <section class="bg-white/[0.02] backdrop-blur-3xl rounded-[32px] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.04]">
+          <div class="flex items-center gap-4 mb-10">
+            <span class="text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Step 2</span>
+            <h2 class="text-2xl font-bold font-display">Specializations</h2>
+          </div>
 
-          <div class="space-y-6">
-            <!-- Section Title & Description -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                <label class="text-overline block mb-4">Section Title</label>
                 <input v-model="aboutContent.skills.title" type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
+                  class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none"
                   placeholder="What I Do" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                <label class="text-overline block mb-4">Description</label>
                 <input v-model="aboutContent.skills.description" type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="Specialized skills and services..." />
+                  class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none"
+                  placeholder="Service summary..." />
               </div>
             </div>
 
-            <!-- Skills List -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-4">Skills</label>
-              <div class="space-y-4">
+              <label class="text-overline block mb-6">Expertise Items</label>
+              <div class="grid grid-cols-1 gap-4">
                 <div v-for="(skill, index) in aboutContent.skills.items" :key="index"
-                  class="border border-gray-200 rounded-xl p-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input v-model="skill.title" type="text" placeholder="Skill Title"
-                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
-                    <input v-model="skill.description" type="text" placeholder="Skill Description"
-                      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
+                  class="group relative bg-white/[0.03] rounded-[24px] p-6 hover:bg-white/[0.06] transition-all">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                       <label class="text-[9px] uppercase tracking-[0.2em] text-white/20 font-bold ml-1">Title</label>
+                       <input v-model="skill.title" type="text"
+                        class="w-full px-4 py-3 bg-white/5 rounded-xl text-white font-bold outline-none border-none focus:bg-white/10 transition-all"
+                        placeholder="Skill Name" />
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[9px] uppercase tracking-[0.2em] text-white/20 font-bold ml-1">Detail</label>
+                      <input v-model="skill.description" type="text"
+                        class="w-full px-4 py-3 bg-white/5 rounded-xl text-white/60 outline-none border-none focus:bg-white/10 transition-all"
+                        placeholder="Concise description" />
+                    </div>
                   </div>
-                  <div class="flex justify-end mt-2">
-                    <button @click="removeSkill(index)"
-                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all">
-                      Remove
-                    </button>
-                  </div>
+                  <button @click="removeSkill(index)"
+                    class="absolute -top-2 -right-2 p-2 bg-charcoal text-white/40 hover:text-bright-pink rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
               <button @click="addSkill"
-                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
-                + Add Skill
+                class="mt-8 flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add Expertise
               </button>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Experience Section -->
-        <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span
-              class="w-8 h-8 bg-light-green/10 text-light-green rounded-lg flex items-center justify-center text-sm font-bold">3</span>
-            Experience Timeline
-          </h2>
+        <section class="bg-white/[0.02] backdrop-blur-3xl rounded-[32px] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.04]">
+          <div class="flex items-center gap-4 mb-10">
+            <span class="text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Step 3</span>
+            <h2 class="text-2xl font-bold font-display">Journey & Milestones</h2>
+          </div>
 
-          <div class="space-y-6">
-            <!-- Section Title & Description -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                <label class="text-overline block mb-4">Section Title</label>
                 <input v-model="aboutContent.experience.title" type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
+                  class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none"
                   placeholder="Experience" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+                <label class="text-overline block mb-4">Description</label>
                 <input v-model="aboutContent.experience.description" type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                  placeholder="My journey in design" />
+                  class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none"
+                  placeholder="Journey overview..." />
               </div>
             </div>
 
-            <!-- Experience Items -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-4">Experience Items</label>
-              <div class="space-y-4">
+              <label class="text-overline block mb-6">Timeline Events</label>
+              <div class="space-y-6">
                 <div v-for="(item, index) in aboutContent.experience.items" :key="index"
-                  class="border border-gray-200 rounded-xl p-4">
-                  <div class="space-y-3">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input v-model="item.title" type="text" placeholder="Job Title"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
-                      <input v-model="item.period" type="text" placeholder="Time Period (e.g., 2020 - Present)"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent" />
+                  class="group relative bg-white/[0.03] rounded-[24px] p-8 hover:bg-white/[0.06] transition-all">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                    <div class="space-y-2">
+                      <label class="text-[9px] uppercase tracking-[0.2em] text-white/20 font-bold ml-1">Position / Role</label>
+                      <input v-model="item.title" type="text"
+                        class="w-full px-4 py-3 bg-white/5 rounded-xl text-white font-bold outline-none border-none focus:bg-white/10 transition-all"
+                        placeholder="e.g. Senior Designer" />
                     </div>
-                    <textarea v-model="item.description" rows="2" placeholder="Job Description"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"></textarea>
+                    <div class="space-y-2">
+                      <label class="text-[9px] uppercase tracking-[0.2em] text-white/20 font-bold ml-1">Period</label>
+                      <input v-model="item.period" type="text"
+                        class="w-full px-4 py-3 bg-white/5 rounded-xl text-white/60 outline-none border-none focus:bg-white/10 transition-all"
+                        placeholder="e.g. 2020 — Present" />
+                    </div>
                   </div>
-                  <div class="flex justify-end mt-2">
-                    <button @click="removeExperience(index)"
-                      class="text-sm text-bright-pink hover:bg-bright-pink/10 px-3 py-1 rounded-lg transition-all">
-                      Remove
-                    </button>
+                  <div class="space-y-2">
+                    <label class="text-[9px] uppercase tracking-[0.2em] text-white/20 font-bold ml-1">Responsibilities</label>
+                    <textarea v-model="item.description" rows="2"
+                      class="w-full px-4 py-3 bg-white/5 rounded-xl text-white/60 outline-none border-none focus:bg-white/10 transition-all resize-none"
+                      placeholder="Detail your impact..."></textarea>
                   </div>
+                  <button @click="removeExperience(index)"
+                    class="absolute -top-2 -right-2 p-2 bg-charcoal text-white/40 hover:text-bright-pink rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
               <button @click="addExperience"
-                class="mt-4 px-4 py-2 bg-light-green/10 text-light-green rounded-lg font-medium hover:bg-light-green/20 transition-all">
-                + Add Experience
+                class="mt-8 flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add Timeline Item
               </button>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- CTA Section -->
-        <div class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span
-              class="w-8 h-8 bg-blue-purple/10 text-blue-purple rounded-lg flex items-center justify-center text-sm font-bold">4</span>
-            Call to Action Section
-          </h2>
+        <section class="bg-white/[0.02] backdrop-blur-3xl rounded-[32px] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.04]">
+          <div class="flex items-center gap-4 mb-10">
+            <span class="text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Step 4</span>
+            <h2 class="text-2xl font-bold font-display">Call to Action</h2>
+          </div>
 
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+          <div class="space-y-8">
+            <div class="space-y-2">
+              <label class="text-overline block">Main Title</label>
               <input v-model="aboutContent.cta.title" type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
+                class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white text-xl font-bold focus:ring-1 focus:ring-white/20 outline-none border-none"
                 placeholder="Let's Create Together" />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-              <textarea v-model="aboutContent.cta.subtitle" rows="2"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
+            <div class="space-y-2">
+              <label class="text-overline block">Engagement Message</label>
+              <textarea v-model="aboutContent.cta.subtitle" rows="3"
+                class="w-full px-6 py-4 bg-white/[0.03] rounded-2xl text-white/60 focus:ring-1 focus:ring-white/20 outline-none border-none resize-none"
                 placeholder="I'm always excited to work on new projects..."></textarea>
             </div>
           </div>
+        </section>
+
+        <!-- Final Save -->
+        <div class="flex justify-center pt-8">
+          <button @click="saveAllContent" :disabled="saving"
+            class="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-white transition-all duration-300 font-display">
+            <!-- Animated Background -->
+            <div class="absolute inset-0 bg-white rounded-full transition-transform duration-500 group-hover:scale-105"></div>
+            <div class="absolute inset-[2px] bg-charcoal rounded-full transition-colors duration-500 group-hover:bg-bright-pink"></div>
+            
+            <span class="relative z-10 flex items-center gap-3">
+              <span v-if="!saving" class="flex items-center gap-3">
+                 Confirm All Changes
+                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                 </svg>
+              </span>
+              <span v-else class="flex items-center gap-2">
+                <div class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                Saving to Database...
+              </span>
+            </span>
+          </button>
         </div>
       </div>
-
-      <!-- Save Button (Bottom) -->
-      <div class="mt-8 text-center">
-        <button @click="saveAllContent" :disabled="saving"
-          class="px-8 py-3 bg-blue-purple text-portfolio-white rounded-full font-semibold hover:bg-bright-pink transition-all shadow-lg hover:shadow-xl disabled:opacity-50">
-          {{ saving ? 'Saving...' : 'Save All Changes' }}
-        </button>
-      </div>
-    </main>
-  </div>
+    </div>
+  </NuxtLayout>
 </template>
 
 <script setup>
@@ -371,10 +403,10 @@ const saveAllContent = async () => {
       console.log('Content inserted successfully')
     }
 
-    useToast().success('Changes saved successfully!')
+    useAppToast().success('Changes saved successfully!')
   } catch (error) {
     console.error('Error saving content:', error)
-    useToast().error('Error saving changes. Please try again.')
+    useAppToast().error('Error saving changes. Please try again.')
   } finally {
     saving.value = false
   }
@@ -423,10 +455,10 @@ const handleImageUpload = async (e) => {
     console.log('Image uploaded successfully, URL:', publicUrl)
     aboutContent.value.hero.image = publicUrl
     console.log('aboutContent.hero.image set to:', aboutContent.value.hero.image)
-    useToast().success('Image uploaded successfully')
+    useAppToast().success('Image uploaded successfully')
   } catch (error) {
     console.error('Error uploading image:', error)
-    useToast().error('Failed to upload image. Please try again.')
+    useAppToast().error('Failed to upload image. Please try again.')
   } finally {
     uploadingImage.value = false
     e.target.value = '' // Reset input

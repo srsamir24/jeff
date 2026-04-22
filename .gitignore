@@ -85,3 +85,5 @@ pnpm-debug.log*
 
 # Local Supabase instance files
 supabase/.gitignore
+
+/appdemo/*

@@ -1,192 +1,226 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Admin Header -->
-    <header class="bg-portfolio-white border-b border-gray-200 sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-                </path>
-              </svg>
-            </NuxtLink>
-            <h1 class="text-2xl font-bold text-gray-900">Social Links & External URLs</h1>
-          </div>
-          <button @click="addNewLink"
-            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all">
-            + Add New Link
-          </button>
+  <NuxtLayout name="admin">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header Area -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight text-white mb-2 font-display">Social Eco-system</h1>
+          <p class="text-white/40 font-medium">Manage your digital presence and external touchpoints ({{ socialLinks.length }} active)</p>
         </div>
+        <button @click="addNewLink"
+          class="group flex items-center justify-center gap-2 px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300">
+          <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Add New Connection
+        </button>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8 max-w-6xl">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
-        <p class="text-gray-500 mt-4">Loading social links...</p>
+      <div v-if="loading" class="flex flex-col items-center justify-center py-24">
+        <div class="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
+        <p class="text-white/40 font-medium animate-pulse">Scanning connections...</p>
       </div>
 
       <!-- Social Links List -->
-      <div v-else class="space-y-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
         <div v-for="link in socialLinks" :key="link.id"
-          class="bg-portfolio-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all">
-          <div class="flex items-center gap-6">
+          class="group relative bg-white/[0.03] backdrop-blur-3xl rounded-[32px] p-8 hover:bg-white/[0.06] transition-all duration-500 overflow-hidden">
+          
+          <!-- Background Glow -->
+          <div :class="['absolute -right-20 -top-20 w-48 h-48 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-1000', getIconBgClass(link.icon_type)]"></div>
+
+          <div class="relative z-10 flex items-start gap-8">
             <!-- Icon Preview -->
             <div class="flex-shrink-0">
               <div
-                :class="['w-16 h-16 rounded-xl flex items-center justify-center text-portfolio-white', getIconBgClass(link.icon_type)]">
-                <component :is="getIconComponent(link.icon_type)" class="w-8 h-8" />
+                :class="['w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-2xl transition-transform duration-700 group-hover:scale-110', getIconBgClass(link.icon_type)]">
+                <component :is="getIconComponent(link.icon_type)" class="w-10 h-10" />
               </div>
             </div>
 
             <!-- Link Info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3 mb-2">
-                <h3 class="text-lg font-bold text-gray-900">{{ link.name }}</h3>
-                <span v-if="!link.is_active" class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
-                  Inactive
-                </span>
-                <span v-for="location in link.display_location" :key="location"
-                  class="px-2 py-1 bg-light-blue/10 text-light-blue text-xs rounded-full">
-                  {{ location }}
-                </span>
+            <div class="flex-1 min-w-0 pt-1">
+              <div class="flex items-center flex-wrap gap-2 mb-3">
+                <h3 class="text-xl font-bold font-display text-white">{{ link.name }}</h3>
+                <div class="flex gap-2">
+                   <span v-v-if="!link.is_active" class="px-2 py-0.5 bg-white/5 text-white/20 text-[9px] uppercase tracking-widest font-bold rounded-full">
+                    Offline
+                  </span>
+                  <span v-for="location in link.display_location" :key="location"
+                    class="px-2 py-0.5 bg-white/10 text-white/60 text-[9px] uppercase tracking-widest font-bold rounded-full">
+                    {{ location }}
+                  </span>
+                </div>
               </div>
-              <p class="text-sm text-gray-600 truncate">{{ link.url }}</p>
-              <p class="text-xs text-gray-400 mt-1">Icon Type: {{ link.icon_type }} • Order: {{ link.sort_order }}</p>
+              <p class="text-[10px] uppercase tracking-[0.2em] text-white/20 mb-1 font-bold">Endpoint</p>
+              <p class="text-xs text-white/40 truncate font-mono">{{ link.url }}</p>
             </div>
+          </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-2">
-              <button @click="editLink(link)"
-                class="p-2 text-blue-purple hover:bg-blue-purple/10 rounded-lg transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-              <button @click="deleteLink(link)"
-                class="p-2 text-bright-pink hover:bg-bright-pink/10 rounded-lg transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
+          <!-- Actions Overlay -->
+          <div class="absolute top-6 right-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+            <button @click="editLink(link)"
+              class="p-3 bg-white/5 hover:bg-white text-white hover:text-black rounded-full transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button @click="deleteLink(link)"
+              class="p-3 bg-white/5 hover:bg-bright-pink text-white rounded-full transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Simple order indicator -->
+          <div class="absolute bottom-6 left-8 text-[10px] text-white/10 uppercase tracking-[0.4em] font-bold">
+            Pos / {{ link.sort_order }}
           </div>
         </div>
 
         <!-- Empty State -->
-        <div v-if="socialLinks.length === 0" class="text-center py-12 bg-portfolio-white rounded-xl">
-          <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-          <p class="text-gray-500 mb-4">No social links yet</p>
-          <button @click="addNewLink"
-            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all">
-            Add Your First Link
-          </button>
-        </div>
-      </div>
-    </main>
-
-    <!-- Edit/Add Modal -->
-    <div v-if="showModal"
-      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      @click.self="closeModal">
-      <div class="bg-portfolio-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="sticky top-0 bg-portfolio-white border-b border-gray-200 p-6 flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-gray-900">{{ editingLink.id ? 'Edit Link' : 'Add New Link' }}</h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <div v-if="socialLinks.length === 0" 
+          class="col-span-full py-24 bg-white/[0.02] border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
-          </button>
-        </div>
-
-        <div class="p-6 space-y-6">
-          <!-- Name -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Link Name</label>
-            <input v-model="editingLink.name" type="text"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              placeholder="e.g., Instagram, LinkedIn, Upwork">
           </div>
-
-          <!-- URL -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">URL</label>
-            <input v-model="editingLink.url" type="url"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              placeholder="https://...">
-          </div>
-
-          <!-- Icon Type -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Icon Type</label>
-            <select v-model="editingLink.icon_type"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent">
-              <option value="instagram">Instagram</option>
-              <option value="behance">Behance</option>
-              <option value="dribbble">Dribbble</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="twitter">Twitter</option>
-              <option value="facebook">Facebook</option>
-              <option value="upwork">Upwork</option>
-              <option value="link">Generic Link</option>
-            </select>
-          </div>
-
-          <!-- Display Location -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Display Location</label>
-            <div class="space-y-2">
-              <label class="flex items-center">
-                <input type="checkbox" :checked="editingLink.display_location?.includes('footer')"
-                  @change="toggleLocation('footer')" class="mr-2">
-                <span>Footer</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" :checked="editingLink.display_location?.includes('nav')"
-                  @change="toggleLocation('nav')" class="mr-2">
-                <span>Navigation Bar</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Sort Order -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
-            <input v-model.number="editingLink.sort_order" type="number"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              placeholder="0">
-          </div>
-
-          <!-- Active Status -->
-          <div>
-            <label class="flex items-center">
-              <input v-model="editingLink.is_active" type="checkbox" class="mr-2">
-              <span class="text-sm font-medium text-gray-700">Active (visible on site)</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="border-t border-gray-200 p-6 flex justify-end gap-3">
-          <button @click="closeModal"
-            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all">
-            Cancel
-          </button>
-          <button @click="saveLink" :disabled="saving"
-            class="px-6 py-3 bg-blue-purple text-portfolio-white rounded-lg font-semibold hover:bg-bright-pink transition-all disabled:opacity-50">
-            {{ saving ? 'Saving...' : 'Save Link' }}
+          <h3 class="text-xl font-bold font-display text-white/40 mb-2">No Connections Found</h3>
+          <p class="text-white/20 mb-8 max-w-xs">Start building your link ecosystem by adding your first social platform.</p>
+          <button @click="addNewLink"
+            class="px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all">
+            Initialize First Link
           </button>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- Edit/Add Modal Overlay -->
+    <Teleport to="body">
+      <div v-if="showModal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[200] flex items-center justify-center p-4">
+        <div class="bg-[#0c051a] rounded-[40px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-white/5">
+          <!-- Modal Header -->
+          <div class="px-10 py-8 flex items-center justify-between border-b border-white/5">
+            <div>
+              <h2 class="text-2xl font-bold font-display text-white mb-1">
+                {{ editingLink.id ? 'Refine Connection' : 'Register New Connection' }}
+              </h2>
+              <p class="text-white/40 text-[10px] uppercase tracking-widest font-bold">Interface Configuration</p>
+            </div>
+            <button @click="closeModal" class="p-2 text-white/20 hover:text-white transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+            <!-- Basic Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="space-y-3">
+                <label class="text-overline">Link Label</label>
+                <input v-model="editingLink.name" type="text"
+                  class="w-full px-5 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all"
+                  placeholder="e.g. Behance">
+              </div>
+              <div class="space-y-3">
+                 <label class="text-overline">Platform Type</label>
+                <select v-model="editingLink.icon_type"
+                  class="w-full px-5 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none appearance-none transition-all">
+                  <option value="instagram">Instagram</option>
+                  <option value="behance">Behance</option>
+                  <option value="dribbble">Dribbble</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="twitter">Twitter</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="upwork">Upwork</option>
+                  <option value="link">Other / Website</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Endpoint -->
+            <div class="space-y-3">
+              <label class="text-overline">Destination URL</label>
+              <input v-model="editingLink.url" type="url"
+                class="w-full px-5 py-4 bg-white/5 rounded-2xl text-white font-mono text-sm focus:ring-1 focus:ring-white/20 outline-none border-none transition-all"
+                placeholder="https://...">
+            </div>
+
+            <!-- Configuration -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div class="space-y-4">
+                <label class="text-overline">Visibility Clusters</label>
+                <div class="flex flex-col gap-4">
+                  <label class="group flex items-center cursor-pointer">
+                    <div class="relative w-6 h-6 mr-3">
+                      <input type="checkbox" :checked="editingLink.display_location?.includes('footer')"
+                       @change="toggleLocation('footer')" class="sr-only peer">
+                      <div class="absolute inset-0 bg-white/5 rounded-lg peer-checked:bg-white transition-all"></div>
+                      <svg class="absolute inset-0 w-6 h-6 text-black opacity-0 peer-checked:opacity-100 transition-opacity p-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">Site Footer</span>
+                  </label>
+                  <label class="group flex items-center cursor-pointer">
+                    <div class="relative w-6 h-6 mr-3">
+                      <input type="checkbox" :checked="editingLink.display_location?.includes('nav')"
+                       @change="toggleLocation('nav')" class="sr-only peer">
+                      <div class="absolute inset-0 bg-white/5 rounded-lg peer-checked:bg-white transition-all"></div>
+                      <svg class="absolute inset-0 w-6 h-6 text-black opacity-0 peer-checked:opacity-100 transition-opacity p-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span class="text-sm font-medium text-white/60 group-hover:text-white transition-colors">Navigation Menu</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <label class="text-overline">Sequence Order</label>
+                <input v-model.number="editingLink.sort_order" type="number"
+                  class="w-full px-5 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all"
+                  placeholder="0">
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="pt-4 border-t border-white/5 flex items-center justify-between">
+               <div>
+                  <h4 class="text-sm font-bold text-white mb-1">Broadcasting Status</h4>
+                  <p class="text-xs text-white/40">Toggle to enable/disable on the live site</p>
+               </div>
+               <label class="relative inline-flex items-center cursor-pointer">
+                <input v-model="editingLink.is_active" type="checkbox" class="sr-only peer">
+                <div class="w-14 h-8 bg-white/5 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white/20 peer-checked:after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-bright-pink/40"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="px-10 py-8 bg-white/[0.02] flex justify-end gap-4">
+            <button @click="closeModal"
+              class="px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-full text-xs font-bold tracking-widest uppercase transition-all">
+              Abort
+            </button>
+            <button @click="saveLink" :disabled="saving"
+              class="px-8 py-3 bg-white text-black rounded-full text-xs font-bold tracking-widest uppercase hover:bg-bright-pink hover:text-white transition-all disabled:opacity-50">
+              {{ saving ? 'Syncing...' : 'Deploy Changes' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </NuxtLayout>
 </template>
 
 <script setup>
@@ -222,7 +256,7 @@ const fetchSocialLinks = async () => {
     socialLinks.value = data || []
   } catch (error) {
     console.error('Error fetching social links:', error)
-    useToast().error('Failed to load social links')
+    useAppToast().error('Failed to load social links')
   } finally {
     loading.value = false
   }
@@ -276,7 +310,7 @@ const toggleLocation = (location) => {
 // Save link
 const saveLink = async () => {
   if (!editingLink.value.name || !editingLink.value.url) {
-    useToast().error('Please fill in all required fields')
+    useAppToast().error('Please fill in all required fields')
     return
   }
 
@@ -298,7 +332,7 @@ const saveLink = async () => {
         .eq('id', editingLink.value.id)
 
       if (error) throw error
-      useToast().success('Link updated successfully')
+      useAppToast().success('Link updated successfully')
     } else {
       // Insert new
       const { error } = await supabase
@@ -313,14 +347,14 @@ const saveLink = async () => {
         }])
 
       if (error) throw error
-      useToast().success('Link added successfully')
+      useAppToast().success('Link added successfully')
     }
 
     closeModal()
     fetchSocialLinks()
   } catch (error) {
     console.error('Error saving link:', error)
-    useToast().error('Failed to save link')
+    useAppToast().error('Failed to save link')
   } finally {
     saving.value = false
   }
@@ -337,11 +371,11 @@ const deleteLink = async (link) => {
       .eq('id', link.id)
 
     if (error) throw error
-    useToast().success('Link deleted successfully')
+    useAppToast().success('Link deleted successfully')
     fetchSocialLinks()
   } catch (error) {
     console.error('Error deleting link:', error)
-    useToast().error('Failed to delete link')
+    useAppToast().error('Failed to delete link')
   }
 }
 

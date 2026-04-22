@@ -1,40 +1,50 @@
 <template>
-    <Teleport to="body">
-        <Transition name="fade">
-            <div v-if="show"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all" @click.stop>
-                    <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Are you sure?</h3>
-                        <p class="text-gray-600">{{ message }}</p>
-                    </div>
+  <Teleport to="body">
+    <Transition name="fade">
+      <div v-if="show" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-[#080210]/90 backdrop-blur-md">
+        <div 
+          class="w-full max-w-sm space-y-12 animate-fade-in"
+          @click.stop
+        >
+          <div class="space-y-6 text-center">
+            <h3 class="text-3xl font-bold text-white tracking-tighter" style="font-family: 'Space Grotesk', sans-serif;">
+              Are you sure?
+            </h3>
+            <p class="text-white/40 text-sm leading-relaxed max-w-[280px] mx-auto">
+              {{ message }}
+            </p>
+          </div>
 
-                    <div class="flex gap-3">
-                        <button @click="$emit('cancel')"
-                            class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all">
-                            Cancel
-                        </button>
-                        <button @click="$emit('confirm')"
-                            class="flex-1 px-6 py-3 bg-bright-pink text-white rounded-xl font-medium hover:bg-bright-pink/90 transition-all shadow-lg">
-                            Confirm
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-    </Teleport>
+          <div class="space-y-4">
+            <button
+              @click="$emit('confirm')"
+              class="w-full group py-4 transition-all duration-500 relative overflow-hidden bg-white/5"
+            >
+              <div class="relative z-10 flex items-center justify-center">
+                <span class="text-white text-[10px] uppercase tracking-[0.3em] font-medium group-hover:tracking-[0.4em] transition-all duration-500">Confirm Action</span>
+              </div>
+              <div class="absolute inset-0 bg-white/5 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+            </button>
+
+            <button
+              @click="$emit('cancel')"
+              class="w-full group py-4 transition-all duration-500 relative overflow-hidden"
+            >
+              <div class="relative z-10 flex items-center justify-center">
+                <span class="text-white/30 group-hover:text-white text-[10px] uppercase tracking-[0.3em] font-medium transition-all duration-500">Cancel</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup>
 defineProps({
-    show: { type: Boolean, required: true },
-    message: { type: String, required: true }
+  show: { type: Boolean, required: true },
+  message: { type: String, required: true }
 })
 
 defineEmits(['confirm', 'cancel'])
@@ -43,11 +53,21 @@ defineEmits(['confirm', 'cancel'])
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.2s ease;
+  transition: opacity 0.4s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
-    opacity: 0;
+  opacity: 0;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
+

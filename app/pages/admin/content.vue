@@ -1,237 +1,209 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Admin Header -->
-    <header class="bg-portfolio-white border-b border-gray-200 sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center space-x-4">
-          <NuxtLink to="/admin" class="text-gray-500 hover:text-blue-purple">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-          </NuxtLink>
-          <h1 class="text-2xl font-bold text-gray-900">Manage Content</h1>
-        </div>
+  <NuxtLayout name="admin">
+    <div class="max-w-5xl mx-auto">
+      <!-- Header Area -->
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold tracking-tight text-white mb-2 font-display">System Content</h1>
+        <p class="text-white/40 font-medium">Configure global site sections and interactive endpoints</p>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
-        <p class="text-gray-500 mt-4">Loading content...</p>
+      <div v-if="loading" class="flex flex-col items-center justify-center py-24">
+        <div class="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
+        <p class="text-white/40 font-medium animate-pulse">Fetching system state...</p>
       </div>
 
-      <!-- Content Tabs -->
+      <!-- Content Tabs & Forms -->
       <div v-else>
         <!-- Tab Navigation -->
-        <div class="flex space-x-2 mb-8 overflow-x-auto pb-2">
+        <div class="flex items-center gap-2 mb-12 p-1.5 bg-white/[0.03] backdrop-blur-3xl rounded-full w-fit">
           <button
             v-for="tab in tabs"
             :key="tab.key"
             @click="activeTab = tab.key"
             :class="[
-              'px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap',
+              'px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500',
               activeTab === tab.key
-                ? 'bg-blue-purple text-portfolio-white shadow-lg'
-                : 'bg-portfolio-white text-gray-600 hover:bg-gray-100'
+                ? 'bg-white text-black shadow-2xl'
+                : 'text-white/40 hover:text-white hover:bg-white/5'
             ]"
           >
             {{ tab.label }}
           </button>
         </div>
 
-        <!-- Hero Section Form -->
-        <div v-if="activeTab === 'hero'" class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Hero Section</h2>
-          <form @submit.prevent="saveSection('hero')" class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-              <input
-                v-model="contentData.hero.title"
-                type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-              <textarea
-                v-model="contentData.hero.subtitle"
-                rows="3"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              ></textarea>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Forms Container -->
+        <div class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          
+          <!-- Hero Section Form -->
+          <div v-if="activeTab === 'hero'" class="bg-white/[0.03] backdrop-blur-3xl rounded-[40px] p-10 border border-white/5">
+            <div class="flex items-center justify-between mb-10">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">CTA Button Text</label>
-                <input
-                  v-model="contentData.hero.ctaText"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+                <h2 class="text-2xl font-bold font-display text-white">Hero Identity</h2>
+                <p class="text-[10px] uppercase tracking-widest text-white/20 font-bold mt-1">Primary Landing Configuration</p>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">CTA Button Link</label>
-                <input
-                  v-model="contentData.hero.ctaLink"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+              <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
               </div>
             </div>
-            <AppButton
-              type="submit"
-              variant="primary"
-              size="md"
-              rounded="lg"
-              :loading="saving"
-              loading-text="Saving..."
-            >
-              Save Changes
-            </AppButton>
-          </form>
-        </div>
 
-        <!-- Stats Section Form -->
-        <div v-if="activeTab === 'stats'" class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Stats Section</h2>
-          <form @submit.prevent="saveSection('stats')" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div v-for="(stat, index) in contentData.stats.stats" :key="index" class="border border-gray-200 rounded-lg p-4">
-                <h3 class="font-semibold text-gray-900 mb-4">Stat {{ index + 1 }}</h3>
+            <form @submit.prevent="saveSection('hero')" class="space-y-8">
+              <div class="space-y-3">
+                <label class="text-overline">Main Headline</label>
+                <input v-model="contentData.hero.title" type="text"
+                  class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white text-lg font-bold focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+              </div>
+              
+              <div class="space-y-3">
+                <label class="text-overline">Supporting Narrative</label>
+                <textarea v-model="contentData.hero.subtitle" rows="3"
+                  class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all resize-none"></textarea>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-3">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Value</label>
-                    <input
-                      v-model="stat.value"
-                      type="text"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    />
+                  <label class="text-overline">Interaction Label</label>
+                  <input v-model="contentData.hero.ctaText" type="text"
+                    class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                </div>
+                <div class="space-y-3">
+                  <label class="text-overline">Routing Endpoint</label>
+                  <input v-model="contentData.hero.ctaLink" type="text"
+                    class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white font-mono text-sm focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                </div>
+              </div>
+
+              <div class="pt-6 flex justify-end">
+                <button type="submit" :disabled="saving"
+                  class="px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300 disabled:opacity-50">
+                  {{ saving ? 'Synchronizing...' : 'Deploy Hero Updates' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Stats Section Form -->
+          <div v-if="activeTab === 'stats'" class="bg-white/[0.03] backdrop-blur-3xl rounded-[40px] p-10 border border-white/5">
+                <div class="flex items-center justify-between mb-10">
+              <div>
+                <h2 class="text-2xl font-bold font-display text-white">Performance Metrics</h2>
+                <p class="text-[10px] uppercase tracking-widest text-white/20 font-bold mt-1">Vibrancy and Achievements</p>
+              </div>
+              <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </div>
+
+            <form @submit.prevent="saveSection('stats')" class="space-y-10">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div v-for="(stat, index) in contentData.stats.stats" :key="index" 
+                  class="bg-white/[0.02] rounded-[32px] p-8 border border-white/5 space-y-6">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">Metric {{ index + 1 }}</span>
+                    <div :class="['w-3 h-3 rounded-full shadow-[0_0_15px]', stat.colorClass.replace('text-', 'bg-')]"></div>
                   </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
-                    <input
-                      v-model="stat.label"
-                      type="text"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Color Class</label>
-                    <select
-                      v-model="stat.colorClass"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                    >
-                      <option value="text-blue-purple">Blue Purple</option>
-                      <option value="text-bright-pink">Bright Pink</option>
-                      <option value="text-light-green">Light Green</option>
-                      <option value="text-light-blue">Light Blue</option>
-                    </select>
+                  
+                  <div class="space-y-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Data Value</label>
+                      <input v-model="stat.value" type="text"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white font-display text-xl font-bold focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                    </div>
+                    
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Label</label>
+                      <input v-model="stat.label" type="text"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white text-sm focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-1">Aesthetic Accent</label>
+                      <select v-model="stat.colorClass"
+                        class="w-full px-5 py-3.5 bg-white/10 rounded-2xl text-white text-sm focus:ring-1 focus:ring-white/20 outline-none border-none appearance-none transition-all">
+                        <option value="text-bright-pink">Neon Pink</option>
+                        <option value="text-purple-500">Cyber Purple</option>
+                        <option value="text-cyan-400">Glitch Cyan</option>
+                        <option value="text-yellow-400">Solar Yellow</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <AppButton
-              type="submit"
-              variant="primary"
-              size="md"
-              rounded="lg"
-              :loading="saving"
-              loading-text="Saving..."
-            >
-              Save Changes
-            </AppButton>
-          </form>
-        </div>
 
-        <!-- CTA Section Form -->
-        <div v-if="activeTab === 'cta'" class="bg-portfolio-white rounded-2xl p-8 shadow-md">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">CTA Section</h2>
-          <form @submit.prevent="saveSection('cta')" class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-              <input
-                v-model="contentData.cta.title"
-                type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-              <textarea
-                v-model="contentData.cta.subtitle"
-                rows="3"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-              ></textarea>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Primary Button Text</label>
-                <input
-                  v-model="contentData.cta.primaryButtonText"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+              <div class="pt-4 flex justify-end">
+                <button type="submit" :disabled="saving"
+                  class="px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300 disabled:opacity-50">
+                  {{ saving ? 'Synchronizing...' : 'Deploy Statistics' }}
+                </button>
               </div>
+            </form>
+          </div>
+
+          <!-- CTA Section Form -->
+          <div v-if="activeTab === 'cta'" class="bg-white/[0.03] backdrop-blur-3xl rounded-[40px] p-10 border border-white/5">
+             <div class="flex items-center justify-between mb-10">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Primary Button Link</label>
-                <input
-                  v-model="contentData.cta.primaryButtonLink"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+                <h2 class="text-2xl font-bold font-display text-white">Call to Action</h2>
+                <p class="text-[10px] uppercase tracking-widest text-white/20 font-bold mt-1">Conversion Architecture</p>
+              </div>
+              <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                </svg>
               </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Button Text</label>
-                <input
-                  v-model="contentData.cta.secondaryButtonText"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+
+            <form @submit.prevent="saveSection('cta')" class="space-y-8">
+              <div class="space-y-3">
+                <label class="text-overline">Persuasion Title</label>
+                <input v-model="contentData.cta.title" type="text"
+                  class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white text-lg font-bold focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Button Link</label>
-                <input
-                  v-model="contentData.cta.secondaryButtonLink"
-                  type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-purple focus:border-transparent"
-                />
+
+              <div class="space-y-3">
+                <label class="text-overline">Micro-copy</label>
+                <textarea v-model="contentData.cta.subtitle" rows="3"
+                  class="w-full px-6 py-4 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all resize-none"></textarea>
               </div>
-            </div>
-            <AppButton
-              type="submit"
-              variant="primary"
-              size="md"
-              rounded="lg"
-              :loading="saving"
-              loading-text="Saving..."
-            >
-              Save Changes
-            </AppButton>
-          </form>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="space-y-6">
+                   <h4 class="text-[10px] uppercase tracking-[0.3em] text-white/20 font-bold">Primary Trigger</h4>
+                   <div class="space-y-4">
+                      <input v-model="contentData.cta.primaryButtonText" type="text" placeholder="Label"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                      <input v-model="contentData.cta.primaryButtonLink" type="text" placeholder="Route"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white font-mono text-xs focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                   </div>
+                </div>
+
+                <div class="space-y-6">
+                   <h4 class="text-[10px] uppercase tracking-[0.3em] text-white/20 font-bold">Secondary Trigger</h4>
+                   <div class="space-y-4">
+                      <input v-model="contentData.cta.secondaryButtonText" type="text" placeholder="Label"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                      <input v-model="contentData.cta.secondaryButtonLink" type="text" placeholder="Route"
+                        class="w-full px-5 py-3.5 bg-white/5 rounded-2xl text-white font-mono text-xs focus:ring-1 focus:ring-white/20 outline-none border-none transition-all">
+                   </div>
+                </div>
+              </div>
+
+              <div class="pt-6 flex justify-end">
+                <button type="submit" :disabled="saving"
+                  class="px-10 py-4 bg-white text-black rounded-full font-bold hover:bg-bright-pink hover:text-white transition-all duration-300 disabled:opacity-50">
+                  {{ saving ? 'Synchronizing...' : 'Deploy CTA Logic' }}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-
-      <!-- Success Message -->
-      <transition
-        enter-active-class="transition duration-300 ease-out"
-        enter-from-class="opacity-0 translate-y-2"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="transition duration-200 ease-in"
-        leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 translate-y-2"
-      >
-        <div v-if="showSuccess" class="fixed bottom-8 right-8 bg-light-green text-portfolio-white px-6 py-4 rounded-lg shadow-2xl flex items-center space-x-3">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          <span class="font-medium">Changes saved successfully!</span>
-        </div>
-      </transition>
-    </main>
-  </div>
+    </div>
+  </NuxtLayout>
 </template>
 
 <script setup>
@@ -241,7 +213,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
-const toast = useToast()
+const toast = useAppToast()
 
 // State
 const loading = ref(true)

@@ -1,197 +1,149 @@
 <template>
-  <Hero :subtitle="heroSubtitle" />
+  <div>
+    <!-- Hero (Preserved per User Request) -->
+    <Hero :subtitle="heroSubtitle" />
 
-  <!-- Featured Work Section -->
-  <section class="py-20 bg-portfolio-white">
-    <div class="container mx-auto px-6">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Featured Work
+    <!-- Selected Work Section -->
+    <section class="section-padding bg-paper dark:bg-charcoal transition-colors duration-300">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+          <div>
+            <p class="text-overline mb-4">
+              Portfolio
+            </p>
+            <h2 class="text-5xl md:text-7xl font-bold tracking-tighter">
+              Selected Work
+            </h2>
+          </div>
+          <NuxtLink
+            to="/work"
+            class="group flex items-center gap-3 text-sm font-semibold uppercase tracking-widest opacity-60 hover:opacity-100 transition-all"
+          >
+            Explore Projects
+            <UIcon name="lucide:arrow-right" class="w-5 h-5 transition-transform group-hover:translate-x-1" />
+          </NuxtLink>
+        </div>
+
+        <!-- Projects Grid -->
+        <div v-if="loadingProjects" class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div
+            v-for="i in 2"
+            :key="i"
+            class="aspect-[16/10] bg-charcoal/5 dark:bg-paper/5 animate-pulse"
+          />
+        </div>
+
+        <div v-else-if="featuredProjects.length > 0" class="space-y-24">
+          <ProjectCard
+            v-for="project in featuredProjects"
+            :key="project.id"
+            :project-id="project.id"
+            :title="project.title"
+            :description="project.description"
+            :image-url="project.image_url"
+            :tags="project.tags"
+          />
+        </div>
+
+        <div v-else class="text-center py-20 opacity-30">
+          <UIcon name="lucide:folder-open" class="w-16 h-16 mx-auto mb-6" />
+          <p class="font-display">No featured projects to display.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- More Projects - Horizontal Scroll -->
+    <MoreProjects />
+
+    <!-- Material Thinking - Interactive 3D Cylinder -->
+    <MaterialThinking />
+
+    <!-- About Segment (Mini Philosophy) -->
+    <section class="section-padding bg-background-dark text-paper overflow-hidden relative" data-theme="dark">
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+          <div class="space-y-12">
+            <p class="text-overline opacity-40">The Vision</p>
+            <h2 class="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.9]">
+              Design is not decoration. It is clarity made visible.
+            </h2>
+            <p class="font-body text-lg md:text-xl opacity-60 leading-relaxed max-w-xl">
+              I'm Anna Ericyan, a graphic designer dedicated to crafting visual stories that bridge the gap between brand and behavior. I believe in aesthetics driven by purpose.
+            </p>
+            
+            <div class="flex flex-wrap gap-x-8 gap-y-4 pt-4">
+              <div v-for="skill in ['Branding', 'Illustration', 'Strategy', 'Packaging']" :key="skill" class="text-overline opacity-60">
+                · {{ skill }}
+              </div>
+            </div>
+
+            <NuxtLink to="/about">
+              <AppButton variant="ghost" size="lg" class="!text-paper hover:!bg-paper/10 mt-8">
+                Read Philosophy
+                <template #iconRight>
+                  <UIcon name="lucide:arrow-right" class="w-4 h-4" />
+                </template>
+              </AppButton>
+            </NuxtLink>
+          </div>
+
+          <!-- Interaction Placeholder for Premium Feel -->
+          <div class="relative aspect-square md:aspect-auto md:h-[600px] bg-paper/5 rounded-3xl flex items-center justify-center group overflow-hidden">
+             <div class="absolute inset-0 bg-gradient-to-tr from-neon-teal/10 to-electric-violet/10 opacity-50" />
+             <div class="relative z-10 text-center space-y-4">
+                <UIcon name="lucide:mouse-pointer-2" class="w-12 h-12 opacity-20 group-hover:scale-125 transition-transform duration-700" />
+                <p class="text-overline opacity-20">Creative Studio</p>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Segment -->
+    <section class="section-padding bg-paper transition-colors duration-300">
+      <div class="max-w-7xl mx-auto text-center">
+        <p class="text-overline mb-8">Get in Touch</p>
+        <h2 class="text-6xl md:text-8xl font-bold tracking-tighter mb-12">
+          Let's create<br/>something amazing.
         </h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          A curated selection of my recent design projects that showcase creativity and attention to detail
-        </p>
+        <NuxtLink to="/contact">
+           <div class="inline-flex items-center gap-6 group cursor-pointer">
+              <div class="w-20 h-20 md:w-32 md:h-32 rounded-full border border-charcoal/10 flex items-center justify-center group-hover:bg-charcoal group-hover:text-paper transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1)">
+                 <UIcon name="lucide:arrow-up-right" class="w-8 h-8 md:w-12 md:h-12" />
+              </div>
+              <span class="text-2xl md:text-3xl font-display font-semibold tracking-tighter">Start a project</span>
+           </div>
+        </NuxtLink>
       </div>
-
-      <!-- Loading State -->
-      <div v-if="loadingProjects" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-purple"></div>
-      </div>
-
-      <!-- Projects Grid -->
-      <div v-else-if="featuredProjects.length > 0"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8">
-        <ProjectCard
-          v-for="project in featuredProjects"
-          :key="project.id"
-          :project-id="project.id"
-          :title="project.title"
-          :description="project.description"
-          :image-url="project.image_url"
-          :tags="project.tags"
-        />
-      </div>
-
-      <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <p class="text-gray-500">No featured projects to display yet.</p>
-      </div>
-
-      <div class="text-center mt-12">
-        <AppButton to="/work" variant="primary" size="lg">
-          View All Projects
-          <template #iconRight>
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </template>
-        </AppButton>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section v-if="servicesContent.services && servicesContent.services.length > 0" class="py-20 bg-linear-to-b from-light-blue/5 to-portfolio-white">
-    <div class="container mx-auto px-6">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          {{ servicesContent.title || 'What I Do' }}
-        </h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-          {{ servicesContent.subtitle || 'Specialized design services tailored to bring your vision to life' }}
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <ServiceCard
-          v-for="(service, index) in servicesContent.services"
-          :key="index"
-          :title="service.title"
-          :description="service.description"
-          :icon-bg-class="service.iconBgClass"
-          :hover-border-class="service.hoverBorderClass"
-          :hover-text-class="service.hoverTextClass"
-        >
-          <template #icon>
-            <svg class="w-8 h-8 text-portfolio-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getServiceIcon(index)" />
-            </svg>
-          </template>
-        </ServiceCard>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section v-if="statsContent.stats && statsContent.stats.length > 0" class="py-16 bg-portfolio-white">
-    <div class="container mx-auto px-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <StatCard
-          v-for="(stat, index) in statsContent.stats"
-          :key="index"
-          :value="stat.value"
-          :label="stat.label"
-          :color-class="stat.colorClass"
-        />
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
 const supabase = useSupabaseClient()
 
-// Hero content
 const heroSubtitle = ref('Transforming ideas into stunning visual experiences with creativity and precision')
-
-// Featured projects
 const featuredProjects = ref([])
 const loadingProjects = ref(true)
 
-// Services content
-const servicesContent = ref({ title: '', subtitle: '', services: [] })
-
-// Stats content
-const statsContent = ref({ stats: [] })
-
-// Fetch flags
-const contentFetched = ref(false)
-const projectsFetched = ref(false)
-
-// Service icons (matching the original design)
-const serviceIcons = [
-  "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01",
-  "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
-  "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
-  "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-]
-
-const getServiceIcon = (index) => {
-  return serviceIcons[index % serviceIcons.length]
-}
-
-// Fetch all page content (hero, services, stats)
-const fetchPageContent = async () => {
-  if (contentFetched.value) return
-
-  try {
-    const { data, error } = await supabase
-      .from('page_content')
-      .select('*')
-      .in('section_key', ['hero', 'services', 'stats'])
-
-    if (!error && data) {
-      data.forEach(section => {
-        if (section.section_key === 'hero' && section.content?.subtitle) {
-          heroSubtitle.value = section.content.subtitle
-        } else if (section.section_key === 'services' && section.content) {
-          servicesContent.value = section.content
-        } else if (section.section_key === 'stats' && section.content) {
-          statsContent.value = section.content
-        }
-      })
-    }
-
-    contentFetched.value = true
-  } catch (err) {
-    console.error('Error fetching page content:', err)
-    contentFetched.value = true
-  }
-}
-
-// Fetch featured projects
 const fetchFeaturedProjects = async () => {
-  if (projectsFetched.value) {
-    loadingProjects.value = false
-    return
-  }
-
-  loadingProjects.value = true
-
   try {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('featured', true)
       .order('featured_order', { ascending: true })
-      .limit(4)
+      .limit(2)
 
-    if (!error && data) {
-      featuredProjects.value = data
-    }
-
-    projectsFetched.value = true
+    if (!error && data) featuredProjects.value = data
   } catch (err) {
     console.error('Error fetching featured projects:', err)
-    projectsFetched.value = true
   } finally {
     loadingProjects.value = false
   }
 }
 
 onMounted(() => {
-  fetchPageContent()
   fetchFeaturedProjects()
 })
 </script>

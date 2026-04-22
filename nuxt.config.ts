@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
@@ -14,7 +13,23 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxtjs/supabase'],
+  modules: ['@nuxt/ui', '@nuxtjs/supabase'],
+
+  // Nuxt UI handles colorMode — the classSuffix default is '' which pairs
+  // correctly with Tailwind's darkMode: 'class' strategy.
+  // Setting storage to 'cookie' means the server can read the user's
+  // preference on first render and avoid any SSR/client mismatch.
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    storageKey: 'nuxt-color-mode',
+    storage: 'cookie',
+    classSuffix: ''
+  },
+
+  ui: {
+    colorMode: true
+  },
 
   supabase: {
     redirectOptions: {
@@ -22,7 +37,7 @@ export default defineNuxtConfig({
       callback: '/confirm',
       exclude: ['/', '/work', '/work/*', '/about', '/contact'],
     },
-    types: false // Disable TypeScript types generation
+    types: false
   },
 
   vite: {

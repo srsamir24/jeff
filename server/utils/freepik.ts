@@ -16,24 +16,31 @@ export interface FreepikModel {
 }
 
 export const FREEPIK_MODELS: Record<string, FreepikModel> = {
-  // ---- Image: text-to-image ---- (all paths verified against the live API)
+  // ---- Image: text-to-image ---- (every path probe-verified against the live API)
   'mystic': { path: '/v1/ai/mystic', kind: 'image' },
+  'flux-kontext-pro': { path: '/v1/ai/text-to-image/flux-kontext-pro', kind: 'image' },
   'flux-2-pro': { path: '/v1/ai/text-to-image/flux-2-pro', kind: 'image' },
   'flux-2-turbo': { path: '/v1/ai/text-to-image/flux-2-turbo', kind: 'image' },
   'flux-pro-1-1': { path: '/v1/ai/text-to-image/flux-pro-v1-1', kind: 'image' },
   'flux-dev': { path: '/v1/ai/text-to-image/flux-dev', kind: 'image' },
   'hyperflux': { path: '/v1/ai/text-to-image/hyperflux', kind: 'image' },
-  'seedream-v4': { path: '/v1/ai/text-to-image/seedream-v4', kind: 'image' },
+  'seedream-v5-lite': { path: '/v1/ai/text-to-image/seedream-v5-lite', kind: 'image' },
   'seedream-v4-5': { path: '/v1/ai/text-to-image/seedream-v4-5', kind: 'image' },
+  'seedream-v4': { path: '/v1/ai/text-to-image/seedream-v4', kind: 'image' },
+  'imagen4-ultra': { path: '/v1/ai/text-to-image/imagen4-ultra', kind: 'image' },
   'imagen3': { path: '/v1/ai/text-to-image/imagen3', kind: 'image' },
   'runway-t2i': { path: '/v1/ai/text-to-image/runway', kind: 'image' },
 
   // ---- Video: image-to-video ----
-  'kling-v2': { path: '/v1/ai/image-to-video/kling-v2', kind: 'video' },
+  'kling-v2-6-pro': { path: '/v1/ai/image-to-video/kling-v2-6-pro', kind: 'video' },
   'kling-v2-5-pro': { path: '/v1/ai/image-to-video/kling-v2-5-pro', kind: 'video' },
-  'minimax-hailuo-02-1080p': { path: '/v1/ai/image-to-video/minimax-hailuo-02-1080p', kind: 'video' },
+  'kling-v2-1-master': { path: '/v1/ai/image-to-video/kling-v2-1-master', kind: 'video' },
+  'kling-v2': { path: '/v1/ai/image-to-video/kling-v2', kind: 'video' },
   'minimax-hailuo-2-3-1080p': { path: '/v1/ai/image-to-video/minimax-hailuo-2-3-1080p', kind: 'video' },
+  'minimax-hailuo-02-1080p': { path: '/v1/ai/image-to-video/minimax-hailuo-02-1080p', kind: 'video' },
   'wan-v2-6-1080p': { path: '/v1/ai/image-to-video/wan-v2-6-1080p', kind: 'video' },
+  'pixverse-v5': { path: '/v1/ai/image-to-video/pixverse-v5', kind: 'video' },
+  'runway-gen4-turbo': { path: '/v1/ai/image-to-video/runway-gen4-turbo', kind: 'video' },
 
   // ---- Video: start/end frame (image + image_tail) ----
   'kling-pro': { path: '/v1/ai/image-to-video/kling-pro', kind: 'video' },

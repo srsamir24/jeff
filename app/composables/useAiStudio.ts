@@ -44,8 +44,11 @@ export interface StudioModel {
 const URL_IMG = (key: string, label: string, required = false, hint?: string): ImageSlot =>
   ({ key, label, format: 'url', required, hint })
 
+const T2I_AR = { aspectRatio: true } as ModelControls
+const i2vSource = () => [URL_IMG('image', 'Source image', true)]
+
 export const STUDIO_MODELS: StudioModel[] = [
-  // ───────── Text → Image ─────────
+  // ───────── Text → Image (newest first) ─────────
   {
     id: 'mystic', label: 'Mystic', kind: 'image', group: 'Text → Image', badge: 'Flagship',
     blurb: 'Highest fidelity up to 4K. Accepts optional structure & style reference images.',
@@ -56,46 +59,64 @@ export const STUDIO_MODELS: StudioModel[] = [
     ],
     controls: { aspectRatio: true, resolution: true, styleModel: true, hdr: true }
   },
-  { id: 'flux-2-pro', label: 'Flux 2 Pro', kind: 'image', group: 'Text → Image', badge: 'New', blurb: 'Latest Flux — superb prompt adherence & detail.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'flux-2-turbo', label: 'Flux 2 Turbo', kind: 'image', group: 'Text → Image', badge: 'Fast', blurb: 'Flux 2 quality at draft speed.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'flux-pro-1-1', label: 'Flux Pro 1.1', kind: 'image', group: 'Text → Image', blurb: 'Reliable, balanced photoreal output.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'flux-dev', label: 'Flux Dev', kind: 'image', group: 'Text → Image', blurb: 'Cost-effective everyday generations.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'hyperflux', label: 'Hyperflux', kind: 'image', group: 'Text → Image', badge: 'Fast', blurb: 'Ultra-fast drafts and iterations.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'seedream-v4', label: 'Seedream 4', kind: 'image', group: 'Text → Image', blurb: 'Great typography and composition.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'seedream-v4-5', label: 'Seedream 4.5', kind: 'image', group: 'Text → Image', badge: 'New', blurb: 'Latest Seedream, sharper detail.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'imagen3', label: 'Imagen 3', kind: 'image', group: 'Text → Image', blurb: 'Google Imagen 3 — clean, accurate scenes.', prompt: 'required', images: [], controls: { aspectRatio: true } },
-  { id: 'runway-t2i', label: 'Runway', kind: 'image', group: 'Text → Image', blurb: 'Runway’s text-to-image model.', prompt: 'required', images: [], controls: { aspectRatio: true } },
+  { id: 'seedream-v5-lite', label: 'Seedream 5 Lite', kind: 'image', group: 'Text → Image', badge: 'Newest', blurb: 'Newest Seedream — sharpest detail & text.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'imagen4-ultra', label: 'Imagen 4 Ultra', kind: 'image', group: 'Text → Image', badge: 'New', blurb: 'Google Imagen 4 Ultra — top-tier realism.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'flux-2-pro', label: 'Flux 2 Pro', kind: 'image', group: 'Text → Image', badge: 'New', blurb: 'Latest Flux — superb prompt adherence & detail.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'flux-2-turbo', label: 'Flux 2 Turbo', kind: 'image', group: 'Text → Image', badge: 'Fast', blurb: 'Flux 2 quality at draft speed.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'flux-kontext-pro', label: 'Flux Kontext Pro', kind: 'image', group: 'Text → Image', blurb: 'Context-aware Flux for precise prompt edits.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'flux-pro-1-1', label: 'Flux Pro 1.1', kind: 'image', group: 'Text → Image', blurb: 'Reliable, balanced photoreal output.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'flux-dev', label: 'Flux Dev', kind: 'image', group: 'Text → Image', blurb: 'Cost-effective everyday generations.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'hyperflux', label: 'Hyperflux', kind: 'image', group: 'Text → Image', badge: 'Fast', blurb: 'Ultra-fast drafts and iterations.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'seedream-v4-5', label: 'Seedream 4.5', kind: 'image', group: 'Text → Image', blurb: 'Sharp detail, strong composition.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'seedream-v4', label: 'Seedream 4', kind: 'image', group: 'Text → Image', blurb: 'Great typography and layout.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'imagen3', label: 'Imagen 3', kind: 'image', group: 'Text → Image', blurb: 'Google Imagen 3 — clean, accurate scenes.', prompt: 'required', images: [], controls: T2I_AR },
+  { id: 'runway-t2i', label: 'Runway', kind: 'image', group: 'Text → Image', blurb: 'Runway’s text-to-image model.', prompt: 'required', images: [], controls: T2I_AR },
 
-  // ───────── Image → Video ─────────
+  // ───────── Image → Video (newest first) ─────────
   {
-    id: 'kling-v2', label: 'Kling 2.0', kind: 'video', group: 'Image → Video', badge: 'Recommended',
-    blurb: 'Smooth, coherent motion from a still image.', prompt: 'optional',
-    images: [URL_IMG('image', 'Source image', true)],
-    controls: { duration: true, cfgScale: true, negativePrompt: true }
+    id: 'kling-v2-6-pro', label: 'Kling 2.6 Pro', kind: 'video', group: 'Image → Video', badge: 'Newest',
+    blurb: 'Newest Kling — best motion quality on the API.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true, cfgScale: true, negativePrompt: true }
   },
   {
     id: 'kling-v2-5-pro', label: 'Kling 2.5 Pro', kind: 'video', group: 'Image → Video', badge: 'Pro',
-    blurb: 'Highest-quality Kling motion.', prompt: 'optional',
-    images: [URL_IMG('image', 'Source image', true)],
-    controls: { duration: true, cfgScale: true, negativePrompt: true }
+    blurb: 'High-quality Kling motion.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true, cfgScale: true, negativePrompt: true }
   },
   {
-    id: 'minimax-hailuo-02-1080p', label: 'Hailuo 02', kind: 'video', group: 'Image → Video',
-    blurb: 'Cinematic 1080p clips.', prompt: 'optional',
-    images: [URL_IMG('image', 'Source image', true)],
-    controls: { duration: true }
+    id: 'kling-v2-1-master', label: 'Kling 2.1 Master', kind: 'video', group: 'Image → Video',
+    blurb: 'Cinematic, expressive Kling motion.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true, cfgScale: true, negativePrompt: true }
+  },
+  {
+    id: 'kling-v2', label: 'Kling 2.0', kind: 'video', group: 'Image → Video', badge: 'Recommended',
+    blurb: 'Smooth, coherent motion — reliable default.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true, cfgScale: true, negativePrompt: true }
   },
   {
     id: 'minimax-hailuo-2-3-1080p', label: 'Hailuo 2.3', kind: 'video', group: 'Image → Video', badge: 'New',
     blurb: 'Newer Hailuo with stronger motion.', prompt: 'optional',
-    images: [URL_IMG('image', 'Source image', true)],
-    controls: { duration: true }
+    images: i2vSource(), controls: { duration: true }
+  },
+  {
+    id: 'minimax-hailuo-02-1080p', label: 'Hailuo 02', kind: 'video', group: 'Image → Video',
+    blurb: 'Cinematic 1080p clips.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true }
   },
   {
     id: 'wan-v2-6-1080p', label: 'Wan 2.6', kind: 'video', group: 'Image → Video',
     blurb: 'Wan 2.6 — crisp 1080p image-to-video.', prompt: 'optional',
-    images: [URL_IMG('image', 'Source image', true)],
-    controls: { duration: true }
+    images: i2vSource(), controls: { duration: true }
+  },
+  {
+    id: 'pixverse-v5', label: 'PixVerse V5', kind: 'video', group: 'Image → Video',
+    blurb: 'Stylised, punchy motion.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true }
+  },
+  {
+    id: 'runway-gen4-turbo', label: 'Runway Gen-4 Turbo', kind: 'video', group: 'Image → Video',
+    blurb: 'Fast, high-quality Runway motion.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true }
   },
 
   // ───────── Start / End frame → Video ─────────

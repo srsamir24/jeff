@@ -16,6 +16,21 @@
         <span class="bday-arrow">→</span>
       </NuxtLink>
 
+      <!-- AI Studio entry -->
+      <NuxtLink to="/admin/studio" class="group relative flex items-center justify-between gap-6 p-8 rounded-2xl bg-white/[0.04] overflow-hidden transition-all duration-700 hover:bg-white/[0.07]">
+        <div class="flex items-center gap-5 relative z-10">
+          <div class="w-14 h-14 rounded-2xl bg-[var(--ui-primary)]/15 flex items-center justify-center text-[var(--ui-primary)]">
+            <Icon name="i-heroicons-sparkles" class="w-7 h-7 transition-transform duration-500 group-hover:scale-110" />
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-lg font-bold tracking-tight">AI Studio</h4>
+            <p class="text-white/30 text-xs">Generate images & video with Freepik / Magnific — uses your account credits.</p>
+          </div>
+        </div>
+        <span class="relative z-10 text-white/20 group-hover:text-white group-hover:translate-x-2 transition-all duration-500">→</span>
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[var(--ui-primary)]/[0.06] rounded-full blur-3xl group-hover:bg-[var(--ui-primary)]/[0.12] transition-all duration-700"></div>
+      </NuxtLink>
+
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Projects Stat -->

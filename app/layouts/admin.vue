@@ -173,6 +173,7 @@ const loggingOut = ref(false)
 const isMobileMenuOpen = ref(false)
 
 const adminLinks = [
+  { to: '/admin/studio', label: 'AI Studio', icon: 'i-heroicons-sparkles' },
   { to: '/admin/projects', label: 'Projects', icon: 'i-heroicons-rectangle-stack' },
   { to: '/admin/featured-projects', label: 'Featured', icon: 'i-heroicons-star' },
   { to: '/admin/about', label: 'About', icon: 'i-heroicons-user' },

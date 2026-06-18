@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "WebFetch(domain:docs.freepik.com)",
+      "WebFetch(domain:docs.magnific.com)"
     ],
     "deny": [],
     "ask": []

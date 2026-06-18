@@ -1,15 +1,25 @@
 <template>
   <div class="min-h-screen bg-[var(--bg-color)] font-body text-[var(--text-color)] selection:bg-[var(--ui-primary)]/20 transition-colors duration-500">
     <!-- Desktop Sidebar -->
-    <aside class="hidden lg:flex fixed inset-y-0 left-0 w-72 flex-col z-[100] border-r border-[var(--admin-border)] backdrop-blur-3xl bg-[var(--admin-header-bg)] transition-colors duration-500">
+    <aside
+      class="hidden lg:flex fixed inset-y-0 left-0 w-72 flex-col z-[100] border-r border-[var(--admin-border)] backdrop-blur-3xl bg-[var(--admin-header-bg)] transition-[transform,colors] duration-500"
+      :class="sidebarCollapsed ? '-translate-x-full' : 'translate-x-0'"
+    >
       <!-- Sidebar Header -->
-      <div class="p-8 border-b border-[var(--admin-border)]">
+      <div class="p-8 border-b border-[var(--admin-border)] flex items-start justify-between gap-2">
         <NuxtLink to="/admin" class="group flex flex-col gap-1">
           <h1 class="text-xl font-bold tracking-tighter font-display">
             ANNA ERICYAN
           </h1>
           <span class="text-[9px] uppercase tracking-[0.5em] text-[var(--admin-muted)] font-medium group-hover:text-[var(--ui-primary)] transition-colors duration-500">Dashboard</span>
         </NuxtLink>
+        <button
+          @click="sidebarCollapsed = true"
+          class="shrink-0 w-8 h-8 -mr-1 flex items-center justify-center rounded-lg text-[var(--admin-muted)] hover:text-[var(--text-color)] hover:bg-[var(--admin-nav-hover)] transition-colors"
+          title="Hide sidebar"
+        >
+          <Icon name="i-heroicons-chevron-double-left" class="w-5 h-5" />
+        </button>
       </div>
 
       <!-- Navigation -->
@@ -142,8 +152,18 @@
       </aside>
     </Transition>
 
+    <!-- Floating reopen button (desktop, when sidebar hidden) -->
+    <button
+      v-if="sidebarCollapsed"
+      @click="sidebarCollapsed = false"
+      class="hidden lg:flex fixed top-6 left-6 z-[110] w-11 h-11 items-center justify-center rounded-full border border-[var(--admin-border)] bg-[var(--admin-header-bg)] backdrop-blur-xl text-[var(--admin-muted)] hover:text-[var(--text-color)] hover:bg-[var(--admin-nav-active)] shadow-lg transition-all duration-300"
+      title="Show sidebar"
+    >
+      <Icon name="i-heroicons-bars-3" class="w-5 h-5" />
+    </button>
+
     <!-- Main Content -->
-    <main class="transition-all duration-500 lg:pl-72 pt-16 lg:pt-0">
+    <main class="transition-all duration-500 pt-16 lg:pt-0" :class="sidebarCollapsed ? 'lg:pl-0' : 'lg:pl-72'">
       <div class="p-6 md:p-12 max-w-[1400px] mx-auto min-h-screen">
         <div class="bg-[var(--admin-card-bg)] border border-[var(--admin-border)] rounded-3xl p-8 md:p-12 backdrop-blur-sm min-h-[calc(100vh-6rem)] shadow-sm transition-colors duration-500">
           <slot />
@@ -171,6 +191,15 @@ const confirmDialog = useConfirm()
 
 const loggingOut = ref(false)
 const isMobileMenuOpen = ref(false)
+const sidebarCollapsed = ref(false)
+
+// Persist the collapsed preference across navigations/reloads
+onMounted(() => {
+  sidebarCollapsed.value = localStorage.getItem('admin-sidebar-collapsed') === '1'
+})
+watch(sidebarCollapsed, (v) => {
+  localStorage.setItem('admin-sidebar-collapsed', v ? '1' : '0')
+})
 
 const adminLinks = [
   { to: '/admin/studio', label: 'AI Studio', icon: 'i-heroicons-sparkles' },

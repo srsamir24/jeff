@@ -16,20 +16,30 @@ export interface FreepikModel {
 }
 
 export const FREEPIK_MODELS: Record<string, FreepikModel> = {
-  // ---- Image (text-to-image) ----
+  // ---- Image: text-to-image ---- (all paths verified against the live API)
   'mystic': { path: '/v1/ai/mystic', kind: 'image' },
-  'flux-dev': { path: '/v1/ai/flux-dev', kind: 'image' },
-  'flux-pro-1-1': { path: '/v1/ai/flux-pro-v1-1', kind: 'image' },
-  'flux-2-turbo': { path: '/v1/ai/flux-2-turbo', kind: 'image' },
-  'flux-2-pro': { path: '/v1/ai/flux-2-pro', kind: 'image' },
-  'hyperflux': { path: '/v1/ai/hyperflux', kind: 'image' },
-  'seedream-v4-5': { path: '/v1/ai/seedream-v4-5', kind: 'image' },
+  'flux-2-pro': { path: '/v1/ai/text-to-image/flux-2-pro', kind: 'image' },
+  'flux-2-turbo': { path: '/v1/ai/text-to-image/flux-2-turbo', kind: 'image' },
+  'flux-pro-1-1': { path: '/v1/ai/text-to-image/flux-pro-v1-1', kind: 'image' },
+  'flux-dev': { path: '/v1/ai/text-to-image/flux-dev', kind: 'image' },
+  'hyperflux': { path: '/v1/ai/text-to-image/hyperflux', kind: 'image' },
+  'seedream-v4': { path: '/v1/ai/text-to-image/seedream-v4', kind: 'image' },
+  'seedream-v4-5': { path: '/v1/ai/text-to-image/seedream-v4-5', kind: 'image' },
+  'imagen3': { path: '/v1/ai/text-to-image/imagen3', kind: 'image' },
+  'runway-t2i': { path: '/v1/ai/text-to-image/runway', kind: 'image' },
 
-  // ---- Video (image-to-video) ----
+  // ---- Video: image-to-video ----
   'kling-v2': { path: '/v1/ai/image-to-video/kling-v2', kind: 'video' },
   'kling-v2-5-pro': { path: '/v1/ai/image-to-video/kling-v2-5-pro', kind: 'video' },
-  'seedance-pro-1080p': { path: '/v1/ai/seedance-pro-1080p', kind: 'video' },
-  'minimax-hailuo-02-1080p': { path: '/v1/ai/minimax-hailuo-02-1080p', kind: 'video' }
+  'minimax-hailuo-02-1080p': { path: '/v1/ai/image-to-video/minimax-hailuo-02-1080p', kind: 'video' },
+  'minimax-hailuo-2-3-1080p': { path: '/v1/ai/image-to-video/minimax-hailuo-2-3-1080p', kind: 'video' },
+  'wan-v2-6-1080p': { path: '/v1/ai/image-to-video/wan-v2-6-1080p', kind: 'video' },
+
+  // ---- Video: start/end frame (image + image_tail) ----
+  'kling-pro': { path: '/v1/ai/image-to-video/kling-pro', kind: 'video' },
+
+  // ---- Video: text-to-video ----
+  'ltx-2-pro': { path: '/v1/ai/text-to-video/ltx-2-pro', kind: 'video' }
 }
 
 export function resolveModel(id: unknown): FreepikModel {

@@ -13,6 +13,12 @@ import type { H3Event } from 'h3'
 export interface FreepikModel {
   path: string
   kind: 'image' | 'video'
+  /**
+   * Status endpoint base, when it differs from `path`. Newer /v1/ai/video/*
+   * models POST to a tiered path (…/kling-v3-pro) but report status on the
+   * untiered family path (…/kling-v3/{task_id}).
+   */
+  statusPath?: string
 }
 
 export const FREEPIK_MODELS: Record<string, FreepikModel> = {
@@ -31,7 +37,16 @@ export const FREEPIK_MODELS: Record<string, FreepikModel> = {
   'imagen3': { path: '/v1/ai/text-to-image/imagen3', kind: 'image' },
   'runway-t2i': { path: '/v1/ai/text-to-image/runway', kind: 'image' },
 
+  // ---- Video: Kling 3 family (new /v1/ai/video namespace; status drops the tier) ----
+  'kling-v3-pro': { path: '/v1/ai/video/kling-v3-pro', kind: 'video', statusPath: '/v1/ai/video/kling-v3' },
+  'kling-v3-std': { path: '/v1/ai/video/kling-v3-std', kind: 'video', statusPath: '/v1/ai/video/kling-v3' },
+  'kling-v3-omni-pro': { path: '/v1/ai/video/kling-v3-omni-pro', kind: 'video', statusPath: '/v1/ai/video/kling-v3-omni' },
+  'kling-v3-omni-std': { path: '/v1/ai/video/kling-v3-omni-std', kind: 'video', statusPath: '/v1/ai/video/kling-v3-omni' },
+
   // ---- Video: image-to-video ----
+  'kling-o1-pro': { path: '/v1/ai/image-to-video/kling-o1-pro', kind: 'video' },
+  'minimax-live': { path: '/v1/ai/image-to-video/minimax-live', kind: 'video' },
+  'ltx-2-fast': { path: '/v1/ai/image-to-video/ltx-2-fast', kind: 'video' },
   'kling-v2-6-pro': { path: '/v1/ai/image-to-video/kling-v2-6-pro', kind: 'video' },
   'kling-v2-5-pro': { path: '/v1/ai/image-to-video/kling-v2-5-pro', kind: 'video' },
   'kling-v2-1-master': { path: '/v1/ai/image-to-video/kling-v2-1-master', kind: 'video' },

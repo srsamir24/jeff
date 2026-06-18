@@ -37,9 +37,9 @@
         </div>
       </div>
 
-      <div class="grid gap-8 items-start transition-all duration-500" :class="panelOpen ? 'grid-cols-1 lg:grid-cols-[minmax(0,380px)_1fr]' : 'grid-cols-1'">
+      <div class="grid gap-8 items-start transition-all duration-500" :class="(panelOpen && mode !== 'gallery') ? 'grid-cols-1 lg:grid-cols-[minmax(0,380px)_1fr]' : 'grid-cols-1'">
         <!-- ============ CONTROLS ============ -->
-        <div v-show="panelOpen" class="bg-white/[0.03] backdrop-blur-3xl rounded-[32px] p-7 space-y-7 lg:sticky lg:top-6">
+        <div v-show="panelOpen && mode !== 'gallery'" class="bg-white/[0.03] backdrop-blur-3xl rounded-[32px] p-7 space-y-7 lg:sticky lg:top-6">
           <!-- Model picker (grouped) -->
           <div class="space-y-3">
             <label class="text-overline">Model</label>
@@ -126,7 +126,7 @@
             <div v-if="controls.aspectRatio" class="space-y-2 col-span-2">
               <label class="text-overline">Aspect Ratio</label>
               <select v-model="aspectRatio" class="studio-select">
-                <option v-for="ar in ASPECT_RATIOS" :key="ar.value" :value="ar.value">{{ ar.label }}</option>
+                <option v-for="ar in aspectOptions" :key="ar.value" :value="ar.value">{{ ar.label }}</option>
               </select>
             </div>
             <div v-if="controls.resolution" class="space-y-2">
@@ -177,8 +177,10 @@
           </div>
         </div>
 
-        <!-- ============ RESULTS ============ -->
+        <!-- ============ RESULTS / GALLERY ============ -->
         <div class="space-y-6 min-w-0">
+          <!-- Session generations (Image / Video tabs) -->
+          <template v-if="mode !== 'gallery'">
           <div class="flex items-center justify-between">
             <h2 class="text-overline">Generations</h2>
             <button v-if="history.length" @click="clearHistory" class="text-[10px] uppercase tracking-widest text-white/30 hover:text-red-400 transition">Clear all</button>
@@ -232,6 +234,45 @@
               </div>
             </div>
           </div>
+          </template>
+
+          <!-- Persistent Supabase gallery -->
+          <template v-else>
+            <div class="flex items-center justify-between">
+              <h2 class="text-overline">Saved Gallery <span class="text-white/20 normal-case tracking-normal">· projects/ai-studio</span></h2>
+              <button @click="loadGallery" :disabled="galleryLoading" class="text-[10px] uppercase tracking-widest text-white/30 hover:text-white transition flex items-center gap-1.5">
+                <Icon name="i-heroicons-arrow-path" class="w-3.5 h-3.5" :class="{ 'animate-spin': galleryLoading }" /> Refresh
+              </button>
+            </div>
+
+            <div v-if="galleryLoading && !galleryItems.length" class="rounded-[32px] bg-white/[0.02] py-24 flex flex-col items-center justify-center text-center">
+              <div class="w-10 h-10 border-2 border-white/10 border-t-[var(--ui-primary)] rounded-full animate-spin mb-4"></div>
+              <p class="text-white/40 font-medium">Loading your gallery…</p>
+            </div>
+
+            <div v-else-if="!galleryItems.length" class="rounded-[32px] bg-white/[0.02] py-24 flex flex-col items-center justify-center text-center px-6">
+              <Icon name="i-heroicons-square-3-stack-3d" class="w-12 h-12 text-white/10 mb-4" />
+              <p class="text-white/40 font-medium">No saved assets yet</p>
+              <p class="text-white/20 text-sm mt-1">Completed generations are saved here automatically.</p>
+            </div>
+
+            <div v-else class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div v-for="g in galleryItems" :key="g.path" class="rounded-[20px] overflow-hidden bg-white/[0.03] group">
+                <div class="relative aspect-square bg-black/30 overflow-hidden">
+                  <img v-if="!g.isVideo" :src="g.url" :alt="g.name" class="w-full h-full object-cover" loading="lazy" />
+                  <video v-else :src="g.url" class="w-full h-full object-cover" controls loop playsinline preload="metadata" />
+                  <div class="absolute inset-x-0 bottom-0 p-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/70 to-transparent">
+                    <a :href="`${g.url}?download`" class="action-btn !w-8 !h-8" title="Download">
+                      <Icon name="i-heroicons-arrow-down-tray" class="w-4 h-4" />
+                    </a>
+                    <button @click="deleteGalleryItem(g)" class="action-btn !w-8 !h-8 ml-auto hover:!text-red-400" title="Delete">
+                      <Icon name="i-heroicons-trash" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -241,8 +282,9 @@
 <script setup>
 import {
   useAiStudio, IMAGE_MODELS, VIDEO_MODELS, groupModels, fileToBase64,
-  ASPECT_RATIOS, RESOLUTIONS, MYSTIC_STYLES, DURATIONS
+  ASPECT_RATIOS, VIDEO2_ASPECT_RATIOS, RESOLUTIONS, MYSTIC_STYLES, DURATIONS
 } from '~/composables/useAiStudio'
+import { useConfirm } from '~/composables/useConfirm'
 
 definePageMeta({ middleware: 'admin', layout: false })
 
@@ -250,13 +292,57 @@ const toast = useAppToast()
 const studio = useAiStudio()
 const { proxyUrl } = studio
 const { uploadFile } = useSupabaseStorage()
+const supabase = useSupabaseClient()
+const confirmDialog = useConfirm()
 
 const STORAGE_KEY = 'ai-studio-history-v1'
+const GALLERY_DIR = 'ai-studio'
 
 const modes = [
   { key: 'image', label: 'Image', icon: 'i-heroicons-photo' },
-  { key: 'video', label: 'Video', icon: 'i-heroicons-film' }
+  { key: 'video', label: 'Video', icon: 'i-heroicons-film' },
+  { key: 'gallery', label: 'Gallery', icon: 'i-heroicons-square-3-stack-3d' }
 ]
+
+// ---- persistent gallery (Supabase storage) ----
+const galleryItems = ref([])
+const galleryLoading = ref(false)
+const galleryLoaded = ref(false)
+
+async function loadGallery() {
+  galleryLoading.value = true
+  try {
+    const { data, error } = await supabase.storage
+      .from('projects')
+      .list(GALLERY_DIR, { limit: 300, sortBy: { column: 'created_at', order: 'desc' } })
+    if (error) throw error
+    galleryItems.value = (data || [])
+      .filter((f) => f.name && /\.(png|jpe?g|webp|gif|mp4|webm|mov)$/i.test(f.name))
+      .map((f) => {
+        const path = `${GALLERY_DIR}/${f.name}`
+        const { data: pub } = supabase.storage.from('projects').getPublicUrl(path)
+        return { name: f.name, path, url: pub.publicUrl, isVideo: /\.(mp4|webm|mov)$/i.test(f.name) }
+      })
+    galleryLoaded.value = true
+  } catch (e) {
+    toast.error(errMsg(e, 'Could not load gallery.'))
+  } finally {
+    galleryLoading.value = false
+  }
+}
+
+async function deleteGalleryItem(item) {
+  const ok = await confirmDialog.confirm('Delete this asset from your Supabase gallery? This cannot be undone.')
+  if (!ok) return
+  try {
+    const { error } = await supabase.storage.from('projects').remove([item.path])
+    if (error) throw error
+    galleryItems.value = galleryItems.value.filter((i) => i.path !== item.path)
+    toast.success('Deleted from gallery.')
+  } catch (e) {
+    toast.error(errMsg(e, 'Delete failed.'))
+  }
+}
 
 // ---- form state ----
 const panelOpen = ref(true)
@@ -286,6 +372,14 @@ const models = computed(() => (mode.value === 'image' ? IMAGE_MODELS : VIDEO_MOD
 const groupedModels = computed(() => groupModels(models.value))
 const currentModel = computed(() => models.value.find((m) => m.id === selectedModelId.value) || models.value[0])
 const controls = computed(() => currentModel.value.controls)
+const aspectOptions = computed(() => (currentModel.value.api === 'video2' ? VIDEO2_ASPECT_RATIOS : ASPECT_RATIOS))
+
+// Keep the selected aspect ratio valid when switching between schema families
+// (descriptive `square_1_1` vs ratio-style `16:9`).
+watch(currentModel, (m) => {
+  const opts = (m.api === 'video2' ? VIDEO2_ASPECT_RATIOS : ASPECT_RATIOS).map((o) => o.value)
+  if (!opts.includes(aspectRatio.value)) aspectRatio.value = opts[0]
+})
 
 const promptLabel = computed(() => (mode.value === 'video' ? 'Motion Prompt' : 'Prompt'))
 const promptPlaceholder = computed(() =>
@@ -306,6 +400,10 @@ const canGenerate = computed(() => {
 function setMode(key) {
   if (mode.value === key) return
   mode.value = key
+  if (key === 'gallery') {
+    if (!galleryLoaded.value) loadGallery()
+    return
+  }
   selectedModelId.value = models.value[0].id
 }
 
@@ -362,8 +460,17 @@ function buildPayload() {
   const c = m.controls
   const p = {}
   if (m.prompt !== 'none' && prompt.value.trim()) p.prompt = prompt.value.trim()
-  for (const slot of m.images) {
-    if (slotValues[slot.key]) p[slot.key] = slotValues[slot.key]
+  if (m.api === 'video2') {
+    // Kling 3 namespace takes source/reference images as image_list[{image_url,type}]
+    const list = m.images
+      .map((slot) => slotValues[slot.key])
+      .filter(Boolean)
+      .map((url) => ({ image_url: url, type: 'image' }))
+    if (list.length) p.image_list = list
+  } else {
+    for (const slot of m.images) {
+      if (slotValues[slot.key]) p[slot.key] = slotValues[slot.key]
+    }
   }
   if (c.aspectRatio) p.aspect_ratio = aspectRatio.value
   if (c.resolution) p.resolution = resolution.value
@@ -410,6 +517,7 @@ async function track(item) {
     item.urls = final.generated || []
     if (final.status === 'COMPLETED' && item.urls.length) {
       toast.success(`${item.modelLabel} ${item.kind} ready!`)
+      autoSaveToGallery(item) // persist to Supabase so it survives URL expiry
     } else if (final.status === 'COMPLETED') {
       item.status = 'FAILED'
       toast.error('Generation finished but returned no asset.')
@@ -438,14 +546,30 @@ function useAsVideoSource(item) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+// Download the generated asset (via our proxy) and upload it to Supabase so it
+// lives permanently in the gallery, even after the Freepik URL expires.
+async function persistToGallery(item) {
+  const blob = await $fetch(proxyUrl(item.urls[0]), { responseType: 'blob' })
+  const ext = item.kind === 'video' ? 'mp4' : 'png'
+  const file = new File([blob], `studio-${item.id}.${ext}`, { type: blob.type })
+  await uploadFile(file, `${GALLERY_DIR}/${item.id}.${ext}`)
+  item.saved = true
+  if (galleryLoaded.value) loadGallery()
+}
+
+async function autoSaveToGallery(item) {
+  try {
+    await persistToGallery(item)
+  } catch {
+    // non-fatal: the user can still save manually from the result card
+  }
+}
+
 async function saveToLibrary(item) {
   item.saving = true
   try {
-    const blob = await $fetch(proxyUrl(item.urls[0]), { responseType: 'blob' })
-    const ext = item.kind === 'video' ? 'mp4' : 'png'
-    const file = new File([blob], `studio-${item.id}.${ext}`, { type: blob.type })
-    await uploadFile(file, `ai-studio/${item.id}.${ext}`)
-    toast.success('Saved to Supabase storage → projects/ai-studio')
+    await persistToGallery(item)
+    toast.success('Saved to gallery → projects/ai-studio')
   } catch (e) {
     toast.error(errMsg(e, 'Could not save asset.'))
   } finally {

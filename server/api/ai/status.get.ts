@@ -29,7 +29,8 @@ export default defineEventHandler(async (event) => {
     return { taskId, status: cached.status, generated: cached.generated, source: 'webhook' }
   }
 
-  const res = await freepikFetch<{ data?: any } & any>(`${model.path}/${taskId}`, { method: 'GET' })
+  const statusBase = model.statusPath || model.path
+  const res = await freepikFetch<{ data?: any } & any>(`${statusBase}/${taskId}`, { method: 'GET' })
   const data = res?.data ?? res
   return {
     taskId,

@@ -39,6 +39,13 @@ export interface StudioModel {
   prompt: 'required' | 'optional' | 'none'
   images: ImageSlot[]
   controls: ModelControls
+  /**
+   * Request schema family. 'classic' = legacy /v1/ai endpoints (string duration,
+   * descriptive aspect_ratio, image as a plain field). 'video2' = new
+   * /v1/ai/video/* endpoints (aspect_ratio like '16:9', source image goes into
+   * image_list[]). Defaults to 'classic'.
+   */
+  api?: 'classic' | 'video2'
 }
 
 const URL_IMG = (key: string, label: string, required = false, hint?: string): ImageSlot =>
@@ -72,7 +79,38 @@ export const STUDIO_MODELS: StudioModel[] = [
   { id: 'imagen3', label: 'Imagen 3', kind: 'image', group: 'Text → Image', blurb: 'Google Imagen 3 — clean, accurate scenes.', prompt: 'required', images: [], controls: T2I_AR },
   { id: 'runway-t2i', label: 'Runway', kind: 'image', group: 'Text → Image', blurb: 'Runway’s text-to-image model.', prompt: 'required', images: [], controls: T2I_AR },
 
+  // ───────── Kling 3 (text→video or image→video; new /v1/ai/video schema) ─────────
+  {
+    id: 'kling-v3-pro', label: 'Kling 3 Pro', kind: 'video', group: 'Kling 3 · Text / Image → Video', badge: 'Latest',
+    blurb: 'Newest Kling. Prompt-only or from an image. Multi-shot, top motion quality.', prompt: 'required', api: 'video2',
+    images: [URL_IMG('image', 'Source image', false, 'Optional — leave empty for text-to-video')],
+    controls: { aspectRatio: true, duration: true, cfgScale: true, negativePrompt: true }
+  },
+  {
+    id: 'kling-v3-std', label: 'Kling 3 Standard', kind: 'video', group: 'Kling 3 · Text / Image → Video', badge: 'Latest',
+    blurb: 'Kling 3 at best value. Prompt-only or from an image.', prompt: 'required', api: 'video2',
+    images: [URL_IMG('image', 'Source image', false, 'Optional — leave empty for text-to-video')],
+    controls: { aspectRatio: true, duration: true, cfgScale: true, negativePrompt: true }
+  },
+  {
+    id: 'kling-v3-omni-pro', label: 'Kling 3 Omni Pro', kind: 'video', group: 'Kling 3 · Text / Image → Video',
+    blurb: 'Kling 3 Omni — strongest element & character consistency.', prompt: 'required', api: 'video2',
+    images: [URL_IMG('image', 'Source image', false, 'Optional')],
+    controls: { aspectRatio: true, duration: true, cfgScale: true, negativePrompt: true }
+  },
+  {
+    id: 'kling-v3-omni-std', label: 'Kling 3 Omni Std', kind: 'video', group: 'Kling 3 · Text / Image → Video',
+    blurb: 'Kling 3 Omni at best value.', prompt: 'required', api: 'video2',
+    images: [URL_IMG('image', 'Source image', false, 'Optional')],
+    controls: { aspectRatio: true, duration: true, cfgScale: true, negativePrompt: true }
+  },
+
   // ───────── Image → Video (newest first) ─────────
+  {
+    id: 'kling-o1-pro', label: 'Kling O1 Pro', kind: 'video', group: 'Image → Video', badge: 'New',
+    blurb: 'High-performance Kling generation from a still.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true, cfgScale: true, negativePrompt: true }
+  },
   {
     id: 'kling-v2-6-pro', label: 'Kling 2.6 Pro', kind: 'video', group: 'Image → Video', badge: 'Newest',
     blurb: 'Newest Kling — best motion quality on the API.', prompt: 'optional',
@@ -118,6 +156,11 @@ export const STUDIO_MODELS: StudioModel[] = [
     blurb: 'Fast, high-quality Runway motion.', prompt: 'optional',
     images: i2vSource(), controls: { duration: true }
   },
+  {
+    id: 'minimax-live', label: 'MiniMax Live', kind: 'video', group: 'Image → Video', badge: 'New',
+    blurb: 'Fast, lively animation from a still.', prompt: 'optional',
+    images: i2vSource(), controls: { duration: true }
+  },
 
   // ───────── Start / End frame → Video ─────────
   {
@@ -134,8 +177,12 @@ export const STUDIO_MODELS: StudioModel[] = [
   {
     id: 'ltx-2-pro', label: 'LTX 2.0 Pro', kind: 'video', group: 'Text → Video', badge: 'No image',
     blurb: 'Generate video directly from a prompt — no source image needed.', prompt: 'required',
-    images: [],
-    controls: { duration: true }
+    images: [], controls: { duration: true }
+  },
+  {
+    id: 'ltx-2-fast', label: 'LTX 2.0 Fast', kind: 'video', group: 'Text → Video', badge: 'Fast',
+    blurb: 'Fastest text-to-video drafts.', prompt: 'required',
+    images: [], controls: { duration: true }
   }
 ]
 
@@ -162,6 +209,13 @@ export const ASPECT_RATIOS = [
   { value: 'standard_3_2', label: 'Photo · 3:2' },
   { value: 'portrait_2_3', label: 'Portrait · 2:3' },
   { value: 'social_post_4_5', label: 'Social · 4:5' }
+]
+
+// Kling 3 (/v1/ai/video) uses ratio-style aspect values instead of the descriptive enum.
+export const VIDEO2_ASPECT_RATIOS = [
+  { value: '16:9', label: 'Landscape · 16:9' },
+  { value: '9:16', label: 'Vertical · 9:16' },
+  { value: '1:1', label: 'Square · 1:1' }
 ]
 
 export const RESOLUTIONS = [
